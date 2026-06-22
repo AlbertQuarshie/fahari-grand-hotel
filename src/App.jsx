@@ -6,8 +6,8 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import RoomsBrowse from "./pages/guest/RoomsBrowse";
 
-// Placeholder pages — we'll replace these one by one
 const Placeholder = ({ title }) => (
   <div className="flex items-center justify-center h-64">
     <p className="text-slate-400 text-lg">{title} — coming soon</p>
@@ -40,7 +40,8 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/guest/rooms" element={<Placeholder title="Browse Rooms" />} />
+            <Route path="/guest/rooms" element={<RoomsBrowse />} />
+            <Route path="/guest/rooms/:id" element={<Placeholder title="Room Detail" />} />
             <Route path="/guest/bookings" element={<Placeholder title="My Bookings" />} />
           </Route>
 
