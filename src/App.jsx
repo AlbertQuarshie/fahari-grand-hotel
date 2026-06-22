@@ -1,21 +1,76 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/shared/ProtectedRoute";
+
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+
 function App() {
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <div className="text-center space-y-4 p-8">
-        <h1 className="text-5xl font-bold text-amber-400 tracking-tight">
-          Fahari Grand Hotel & Suites
-        </h1>
-        <p className="text-lg text-slate-300 italic">
-          Where magnificence lives.
-        </p>
-        <div className="pt-4">
-          <span className="inline-block px-4 py-2 rounded-full bg-amber-400 text-slate-900 font-semibold text-sm">
-            Tailwind is working ✅
-          </span>
-        </div>
-      </div>
-    </div>
-  )
+    <AuthProvider>
+      <BrowserRouter>
+        <Toaster position="top-right" />
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          <Route
+            path="/unauthorized"
+            element={
+              <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+                You are not authorized to view this page.
+              </div>
+            }
+          />
+
+          {/* Placeholder protected routes — we'll build real pages next */}
+          <Route
+            path="/guest/rooms"
+            element={
+              <ProtectedRoute allowedRoles={["guest"]}>
+                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+                  Guest Dashboard (placeholder)
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/receptionist/roster"
+            element={
+              <ProtectedRoute allowedRoles={["receptionist"]}>
+                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+                  Receptionist Dashboard (placeholder)
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/housekeeper/tasks"
+            element={
+              <ProtectedRoute allowedRoles={["housekeeper"]}>
+                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+                  Housekeeper Dashboard (placeholder)
+                </div>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+                  Admin Dashboard (placeholder)
+                </div>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
