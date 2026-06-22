@@ -2,9 +2,17 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
+import DashboardLayout from "./components/layout/DashboardLayout";
 
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+
+// Placeholder pages — we'll replace these one by one
+const Placeholder = ({ title }) => (
+  <div className="flex items-center justify-center h-64">
+    <p className="text-slate-400 text-lg">{title} — coming soon</p>
+  </div>
+);
 
 function App() {
   return (
@@ -12,9 +20,9 @@ function App() {
       <BrowserRouter>
         <Toaster position="top-right" />
         <Routes>
+          {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
           <Route
             path="/unauthorized"
             element={
@@ -24,47 +32,56 @@ function App() {
             }
           />
 
-          {/* Placeholder protected routes — we'll build real pages next */}
+          {/* Guest routes */}
           <Route
-            path="/guest/rooms"
             element={
               <ProtectedRoute allowedRoles={["guest"]}>
-                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
-                  Guest Dashboard (placeholder)
-                </div>
+                <DashboardLayout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="/guest/rooms" element={<Placeholder title="Browse Rooms" />} />
+            <Route path="/guest/bookings" element={<Placeholder title="My Bookings" />} />
+          </Route>
+
+          {/* Receptionist routes */}
           <Route
-            path="/receptionist/roster"
             element={
               <ProtectedRoute allowedRoles={["receptionist"]}>
-                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
-                  Receptionist Dashboard (placeholder)
-                </div>
+                <DashboardLayout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="/receptionist/roster" element={<Placeholder title="Roster" />} />
+            <Route path="/receptionist/walkin" element={<Placeholder title="Walk-in Booking" />} />
+            <Route path="/receptionist/checkinout" element={<Placeholder title="Check In / Out" />} />
+          </Route>
+
+          {/* Housekeeper routes */}
           <Route
-            path="/housekeeper/tasks"
             element={
               <ProtectedRoute allowedRoles={["housekeeper"]}>
-                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
-                  Housekeeper Dashboard (placeholder)
-                </div>
+                <DashboardLayout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="/housekeeper/tasks" element={<Placeholder title="My Tasks" />} />
+          </Route>
+
+          {/* Admin routes */}
           <Route
-            path="/admin/dashboard"
             element={
               <ProtectedRoute allowedRoles={["admin"]}>
-                <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
-                  Admin Dashboard (placeholder)
-                </div>
+                <DashboardLayout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="/admin/dashboard" element={<Placeholder title="Admin Dashboard" />} />
+            <Route path="/admin/rooms" element={<Placeholder title="Room Management" />} />
+            <Route path="/admin/staff" element={<Placeholder title="Staff Management" />} />
+            <Route path="/admin/reviews" element={<Placeholder title="Review Moderation" />} />
+            <Route path="/admin/maintenance" element={<Placeholder title="Maintenance" />} />
+          </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
