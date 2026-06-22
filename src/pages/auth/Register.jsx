@@ -17,6 +17,7 @@ const Register = () => {
         username: formData.username,
         email: formData.email,
         password: formData.password,
+        confirm_password: formData.confirmPassword,
         first_name: formData.firstName,
         last_name: formData.lastName,
         phone: formData.phone,
