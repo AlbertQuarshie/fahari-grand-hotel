@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { loginUser, registerGuest } from "../api/auth.api";
+import { loginUser, registerGuest, getMe } from "../api/auth.api";
 import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
@@ -9,25 +9,40 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    const access = localStorage.getItem("access");
+    const initAuth = async () => {
+      try {
+        const access = localStorage.getItem("access");
+        const storedUser = localStorage.getItem("user");
 
-    if (storedUser && access) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+        if (access && storedUser) {
+          // restore from localStorage first (instant)
+          setUser(JSON.parse(storedUser));
+        }
+      } catch {
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+        localStorage.removeItem("user");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
   const login = async (username, password) => {
-    const data = await loginUser(username, password);
+    // Step 1: get tokens
+    const tokenData = await loginUser(username, password);
+    localStorage.setItem("access", tokenData.access);
+    localStorage.setItem("refresh", tokenData.refresh);
 
-    localStorage.setItem("access", data.access);
-    localStorage.setItem("refresh", data.refresh);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    // Step 2: fetch full user profile using the new token
+    const userData = await getMe();
+    localStorage.setItem("user", JSON.stringify(userData));
 
-    setUser(data.user);
-    toast.success(`Welcome back, ${data.user.first_name || data.user.username}!`);
-    return data.user;
+    setUser(userData);
+    toast.success(`Welcome back, ${userData.first_name || userData.username}!`);
+    return userData;
   };
 
   const register = async (formData) => {

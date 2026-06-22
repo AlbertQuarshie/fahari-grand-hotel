@@ -5,11 +5,10 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
 
 const Register = () => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, getValues, formState: { errors } } = useForm();
   const { register: registerGuest } = useAuth();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
-  const password = watch("password");
 
   const onSubmit = async (formData) => {
     setSubmitting(true);
@@ -118,7 +117,8 @@ const Register = () => {
             <input
               type="password"
               {...register("confirmPassword", {
-                validate: (value) => value === password || "Passwords do not match",
+                validate: (value) =>
+                  value === getValues("password") || "Passwords do not match",
               })}
               className="w-full px-4 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-amber-400 focus:outline-none"
             />
