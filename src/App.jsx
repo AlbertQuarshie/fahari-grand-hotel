@@ -16,6 +16,8 @@ import Roster from "./pages/receptionist/Roster";
 import WalkInBooking from "./pages/receptionist/WalkInBooking";
 import CheckInOut from "./pages/receptionist/CheckInOut";
 import TaskList from "./pages/housekeeper/TaskList";
+import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
+import RoomManagement from "./pages/admin/RoomManagement";
 
 const Placeholder = ({ title }) => (
   <div className="flex items-center justify-center h-64">
@@ -88,8 +90,8 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/admin/dashboard" element={<Placeholder title="Admin Dashboard" />} />
-            <Route path="/admin/rooms" element={<Placeholder title="Room Management" />} />
+            <Route path="/admin/dashboard" element={<AnalyticsDashboard />} />
+            <Route path="/admin/rooms" element={<RoomManagement />} />
             <Route path="/admin/staff" element={<Placeholder title="Staff Management" />} />
             <Route path="/admin/reviews" element={<Placeholder title="Review Moderation" />} />
             <Route path="/admin/maintenance" element={<Placeholder title="Maintenance" />} />
