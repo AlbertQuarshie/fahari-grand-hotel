@@ -17,6 +17,7 @@ const roleNavItems = {
   guest: [
     { label: "Browse Rooms", path: "/guest/rooms", icon: BedDouble },
     { label: "My Bookings", path: "/guest/bookings", icon: CalendarCheck },
+    { label: "Report an Issue", path: "/guest/report", icon: Wrench },
   ],
   receptionist: [
     { label: "Roster", path: "/receptionist/roster", icon: ClipboardList },
@@ -47,7 +48,6 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* Overlay for mobile */}
       {isOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-20 lg:hidden"
@@ -55,7 +55,6 @@ const Sidebar = ({ isOpen, onClose }) => {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`
           fixed top-0 left-0 h-full w-64 bg-slate-900 border-r border-slate-700
@@ -64,7 +63,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           lg:translate-x-0 lg:static lg:z-auto
         `}
       >
-        {/* Logo */}
         <div className="px-6 py-5 border-b border-slate-700">
           <div className="flex items-center gap-2">
             <Hotel className="text-amber-400" size={22} />
@@ -75,7 +73,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* User info */}
         <div className="px-6 py-4 border-b border-slate-700">
           <p className="text-white font-semibold text-sm">
             {user?.first_name} {user?.last_name}
@@ -83,7 +80,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           <p className="text-slate-400 text-xs mt-0.5 capitalize">{role}</p>
         </div>
 
-        {/* Nav links */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map(({ label, path, icon: Icon }) => (
             <NavLink
@@ -104,7 +100,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           ))}
         </nav>
 
-        {/* Logout */}
         <div className="px-3 py-4 border-t border-slate-700">
           <button
             onClick={handleLogout}

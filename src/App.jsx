@@ -11,9 +11,11 @@ import RoomsBrowse from "./pages/guest/RoomsBrowse";
 import RoomDetail from "./pages/guest/RoomDetail";
 import MyBookings from "./pages/guest/MyBookings";
 import BookingPayment from "./pages/guest/BookingPayment";
+import ReportIssue from "./pages/guest/ReportIssue";
 import Roster from "./pages/receptionist/Roster";
 import WalkInBooking from "./pages/receptionist/WalkInBooking";
 import CheckInOut from "./pages/receptionist/CheckInOut";
+import TaskList from "./pages/housekeeper/TaskList";
 
 const Placeholder = ({ title }) => (
   <div className="flex items-center justify-center h-64">
@@ -51,6 +53,7 @@ function App() {
             <Route path="/guest/rooms/:id" element={<RoomDetail />} />
             <Route path="/guest/bookings" element={<MyBookings />} />
             <Route path="/guest/pay/:id" element={<BookingPayment />} />
+            <Route path="/guest/report" element={<ReportIssue />} />
           </Route>
 
           {/* Receptionist routes */}
@@ -74,7 +77,7 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/housekeeper/tasks" element={<Placeholder title="My Tasks" />} />
+            <Route path="/housekeeper/tasks" element={<TaskList />} />
           </Route>
 
           {/* Admin routes */}
