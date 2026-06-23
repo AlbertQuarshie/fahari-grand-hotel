@@ -11,6 +11,9 @@ import RoomsBrowse from "./pages/guest/RoomsBrowse";
 import RoomDetail from "./pages/guest/RoomDetail";
 import MyBookings from "./pages/guest/MyBookings";
 import BookingPayment from "./pages/guest/BookingPayment";
+import Roster from "./pages/receptionist/Roster";
+import WalkInBooking from "./pages/receptionist/WalkInBooking";
+import CheckInOut from "./pages/receptionist/CheckInOut";
 
 const Placeholder = ({ title }) => (
   <div className="flex items-center justify-center h-64">
@@ -24,7 +27,6 @@ function App() {
       <BrowserRouter>
         <Toaster position="top-right" />
         <Routes>
-          {/* Public routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -59,9 +61,9 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/receptionist/roster" element={<Placeholder title="Roster" />} />
-            <Route path="/receptionist/walkin" element={<Placeholder title="Walk-in Booking" />} />
-            <Route path="/receptionist/checkinout" element={<Placeholder title="Check In / Out" />} />
+            <Route path="/receptionist/roster" element={<Roster />} />
+            <Route path="/receptionist/walkin" element={<WalkInBooking />} />
+            <Route path="/receptionist/checkinout" element={<CheckInOut />} />
           </Route>
 
           {/* Housekeeper routes */}
