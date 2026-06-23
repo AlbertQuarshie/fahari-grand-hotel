@@ -7,6 +7,8 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import RoomsBrowse from "./pages/guest/RoomsBrowse";
+import RoomDetail from "./pages/guest/RoomDetail";
+import MyBookings from "./pages/guest/MyBookings";
 
 const Placeholder = ({ title }) => (
   <div className="flex items-center justify-center h-64">
@@ -20,7 +22,6 @@ function App() {
       <BrowserRouter>
         <Toaster position="top-right" />
         <Routes>
-          {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
@@ -41,8 +42,8 @@ function App() {
             }
           >
             <Route path="/guest/rooms" element={<RoomsBrowse />} />
-            <Route path="/guest/rooms/:id" element={<Placeholder title="Room Detail" />} />
-            <Route path="/guest/bookings" element={<Placeholder title="My Bookings" />} />
+            <Route path="/guest/rooms/:id" element={<RoomDetail />} />
+            <Route path="/guest/bookings" element={<MyBookings />} />
           </Route>
 
           {/* Receptionist routes */}

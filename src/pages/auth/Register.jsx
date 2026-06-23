@@ -86,7 +86,7 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-sm text-slate-300 mb-1">Phone (M-Pesa)</label>
+            <label className="block text-sm text-slate-300 mb-1">Phone </label>
             <input
               type="tel"
               placeholder="2547XXXXXXXX"
