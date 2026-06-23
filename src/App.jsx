@@ -9,6 +9,7 @@ import Register from "./pages/auth/Register";
 import RoomsBrowse from "./pages/guest/RoomsBrowse";
 import RoomDetail from "./pages/guest/RoomDetail";
 import MyBookings from "./pages/guest/MyBookings";
+import BookingPayment from "./pages/guest/BookingPayment";
 
 const Placeholder = ({ title }) => (
   <div className="flex items-center justify-center h-64">
@@ -44,6 +45,7 @@ function App() {
             <Route path="/guest/rooms" element={<RoomsBrowse />} />
             <Route path="/guest/rooms/:id" element={<RoomDetail />} />
             <Route path="/guest/bookings" element={<MyBookings />} />
+            <Route path="/guest/pay/:id" element={<BookingPayment />} />
           </Route>
 
           {/* Receptionist routes */}

@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { getMyBookings, cancelBooking } from "../../api/bookings.api";
-import { CalendarCheck, X } from "lucide-react";
+import { CalendarCheck, X, CreditCard } from "lucide-react";
 import toast from "react-hot-toast";
 
 const statusStyles = {
@@ -15,8 +16,9 @@ const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(null);
+  const navigate = useNavigate();
 
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       const data = await getMyBookings();
       setBookings(data);
@@ -25,22 +27,11 @@ const MyBookings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    const loadBookings = async () => {
-      try {
-        const data = await getMyBookings();
-        setBookings(data);
-      } catch {
-        toast.error("Failed to load bookings.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadBookings();
-  }, []);
+    fetchBookings();
+  }, [fetchBookings]);
 
   const handleCancel = async (id) => {
     setCancelling(id);
@@ -90,7 +81,7 @@ const MyBookings = () => {
               className="bg-slate-800 rounded-2xl border border-slate-700 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               <div className="space-y-1.5">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <p className="text-white font-bold text-base">
                     Room {booking.room_number}
                   </p>
@@ -111,7 +102,7 @@ const MyBookings = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="text-right">
                   <p className="text-amber-400 font-bold text-lg">
                     KES {parseFloat(booking.total_price).toLocaleString()}
@@ -120,14 +111,24 @@ const MyBookings = () => {
                 </div>
 
                 {booking.status === "pending" && (
-                  <button
-                    onClick={() => handleCancel(booking.id)}
-                    disabled={cancelling === booking.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 text-sm transition disabled:opacity-50"
-                  >
-                    <X size={14} />
-                    {cancelling === booking.id ? "Cancelling..." : "Cancel"}
-                  </button>
+                  <>
+                    <button
+                      onClick={() => navigate(`/guest/pay/${booking.id}`)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 text-sm transition"
+                    >
+                      <CreditCard size={14} />
+                      Pay Now
+                    </button>
+
+                    <button
+                      onClick={() => handleCancel(booking.id)}
+                      disabled={cancelling === booking.id}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 text-sm transition disabled:opacity-50"
+                    >
+                      <X size={14} />
+                      {cancelling === booking.id ? "Cancelling..." : "Cancel"}
+                    </button>
+                  </>
                 )}
               </div>
             </div>
