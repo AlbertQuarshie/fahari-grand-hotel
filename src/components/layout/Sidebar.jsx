@@ -1,22 +1,16 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import {
-  LayoutDashboard,
-  BedDouble,
-  CalendarCheck,
-  ClipboardList,
-  Users,
-  Star,
-  Wrench,
-  LogOut,
-  Hotel,
-  CheckSquare,
+  LayoutDashboard, BedDouble, CalendarCheck,
+  ClipboardList, Users, Star, Wrench,
+  LogOut, Hotel, CheckSquare,
 } from "lucide-react";
 
 const roleNavItems = {
   guest: [
     { label: "Browse Rooms", path: "/guest/rooms", icon: BedDouble },
     { label: "My Bookings", path: "/guest/bookings", icon: CalendarCheck },
+    { label: "Leave a Review", path: "/guest/review", icon: Star },
     { label: "Report an Issue", path: "/guest/report", icon: Wrench },
   ],
   receptionist: [
@@ -49,20 +43,14 @@ const Sidebar = ({ isOpen, onClose }) => {
   return (
     <>
       {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0 bg-black/50 z-20 lg:hidden" onClick={onClose} />
       )}
-
-      <aside
-        className={`
-          fixed top-0 left-0 h-full w-64 bg-slate-900 border-r border-slate-700
-          flex flex-col z-30 transform transition-transform duration-300 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full"}
-          lg:translate-x-0 lg:static lg:z-auto
-        `}
-      >
+      <aside className={`
+        fixed top-0 left-0 h-full w-64 bg-slate-900 border-r border-slate-700
+        flex flex-col z-30 transform transition-transform duration-300 ease-in-out
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0 lg:static lg:z-auto
+      `}>
         <div className="px-6 py-5 border-b border-slate-700">
           <div className="flex items-center gap-2">
             <Hotel className="text-amber-400" size={22} />
@@ -88,10 +76,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               onClick={onClose}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                ${isActive
-                  ? "bg-amber-400 text-slate-900"
-                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                }`
+                ${isActive ? "bg-amber-400 text-slate-900" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`
               }
             >
               <Icon size={18} />

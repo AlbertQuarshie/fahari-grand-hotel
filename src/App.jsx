@@ -12,6 +12,7 @@ import RoomDetail from "./pages/guest/RoomDetail";
 import MyBookings from "./pages/guest/MyBookings";
 import BookingPayment from "./pages/guest/BookingPayment";
 import ReportIssue from "./pages/guest/ReportIssue";
+import LeaveReview from "./pages/guest/LeaveReview";
 import Roster from "./pages/receptionist/Roster";
 import WalkInBooking from "./pages/receptionist/WalkInBooking";
 import CheckInOut from "./pages/receptionist/CheckInOut";
@@ -19,12 +20,8 @@ import TaskList from "./pages/housekeeper/TaskList";
 import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
 import RoomManagement from "./pages/admin/RoomManagement";
 import StaffManagement from "./pages/admin/StaffManagement";
-
-const Placeholder = ({ title }) => (
-  <div className="flex items-center justify-center h-64">
-    <p className="text-slate-400 text-lg">{title} — coming soon</p>
-  </div>
-);
+import ReviewModeration from "./pages/admin/ReviewModeration";
+import MaintenanceOverview from "./pages/admin/MaintenanceOverview";
 
 function App() {
   return (
@@ -51,6 +48,7 @@ function App() {
             <Route path="/guest/bookings" element={<MyBookings />} />
             <Route path="/guest/pay/:id" element={<BookingPayment />} />
             <Route path="/guest/report" element={<ReportIssue />} />
+            <Route path="/guest/review" element={<LeaveReview />} />
           </Route>
 
           {/* Receptionist routes */}
@@ -70,8 +68,8 @@ function App() {
             <Route path="/admin/dashboard" element={<AnalyticsDashboard />} />
             <Route path="/admin/rooms" element={<RoomManagement />} />
             <Route path="/admin/staff" element={<StaffManagement />} />
-            <Route path="/admin/reviews" element={<Placeholder title="Review Moderation" />} />
-            <Route path="/admin/maintenance" element={<Placeholder title="Maintenance" />} />
+            <Route path="/admin/reviews" element={<ReviewModeration />} />
+            <Route path="/admin/maintenance" element={<MaintenanceOverview />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
