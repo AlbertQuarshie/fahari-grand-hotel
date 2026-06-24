@@ -18,6 +18,7 @@ import CheckInOut from "./pages/receptionist/CheckInOut";
 import TaskList from "./pages/housekeeper/TaskList";
 import AnalyticsDashboard from "./pages/admin/AnalyticsDashboard";
 import RoomManagement from "./pages/admin/RoomManagement";
+import StaffManagement from "./pages/admin/StaffManagement";
 
 const Placeholder = ({ title }) => (
   <div className="flex items-center justify-center h-64">
@@ -44,13 +45,7 @@ function App() {
           />
 
           {/* Guest routes */}
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={["guest"]}>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
+          <Route element={<ProtectedRoute allowedRoles={["guest"]}><DashboardLayout /></ProtectedRoute>}>
             <Route path="/guest/rooms" element={<RoomsBrowse />} />
             <Route path="/guest/rooms/:id" element={<RoomDetail />} />
             <Route path="/guest/bookings" element={<MyBookings />} />
@@ -59,40 +54,22 @@ function App() {
           </Route>
 
           {/* Receptionist routes */}
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={["receptionist"]}>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
+          <Route element={<ProtectedRoute allowedRoles={["receptionist"]}><DashboardLayout /></ProtectedRoute>}>
             <Route path="/receptionist/roster" element={<Roster />} />
             <Route path="/receptionist/walkin" element={<WalkInBooking />} />
             <Route path="/receptionist/checkinout" element={<CheckInOut />} />
           </Route>
 
           {/* Housekeeper routes */}
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={["housekeeper"]}>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
+          <Route element={<ProtectedRoute allowedRoles={["housekeeper"]}><DashboardLayout /></ProtectedRoute>}>
             <Route path="/housekeeper/tasks" element={<TaskList />} />
           </Route>
 
           {/* Admin routes */}
-          <Route
-            element={
-              <ProtectedRoute allowedRoles={["admin"]}>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
-          >
+          <Route element={<ProtectedRoute allowedRoles={["admin"]}><DashboardLayout /></ProtectedRoute>}>
             <Route path="/admin/dashboard" element={<AnalyticsDashboard />} />
             <Route path="/admin/rooms" element={<RoomManagement />} />
-            <Route path="/admin/staff" element={<Placeholder title="Staff Management" />} />
+            <Route path="/admin/staff" element={<StaffManagement />} />
             <Route path="/admin/reviews" element={<Placeholder title="Review Moderation" />} />
             <Route path="/admin/maintenance" element={<Placeholder title="Maintenance" />} />
           </Route>
