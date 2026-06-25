@@ -1,32 +1,28 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import {
-  LayoutDashboard, BedDouble, CalendarCheck,
-  ClipboardList, Users, Star, Wrench,
-  LogOut, Hotel, CheckSquare,
-} from "lucide-react";
+import { display, body } from "../../constants/theme";
 
 const roleNavItems = {
   guest: [
-    { label: "Browse Rooms", path: "/guest/rooms", icon: BedDouble },
-    { label: "My Bookings", path: "/guest/bookings", icon: CalendarCheck },
-    { label: "Leave a Review", path: "/guest/review", icon: Star },
-    { label: "Report an Issue", path: "/guest/report", icon: Wrench },
+    { label: "Browse Rooms", path: "/guest/rooms" },
+    { label: "My Bookings", path: "/guest/bookings" },
+    { label: "Leave a Review", path: "/guest/review" },
+    { label: "Report an Issue", path: "/guest/report" },
   ],
   receptionist: [
-    { label: "Roster", path: "/receptionist/roster", icon: ClipboardList },
-    { label: "Walk-in Booking", path: "/receptionist/walkin", icon: BedDouble },
-    { label: "Check In / Out", path: "/receptionist/checkinout", icon: CheckSquare },
+    { label: "Roster", path: "/receptionist/roster" },
+    { label: "Walk-in Booking", path: "/receptionist/walkin" },
+    { label: "Check In / Out", path: "/receptionist/checkinout" },
   ],
   housekeeper: [
-    { label: "My Tasks", path: "/housekeeper/tasks", icon: CheckSquare },
+    { label: "My Tasks", path: "/housekeeper/tasks" },
   ],
   admin: [
-    { label: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
-    { label: "Rooms", path: "/admin/rooms", icon: BedDouble },
-    { label: "Staff", path: "/admin/staff", icon: Users },
-    { label: "Reviews", path: "/admin/reviews", icon: Star },
-    { label: "Maintenance", path: "/admin/maintenance", icon: Wrench },
+    { label: "Dashboard", path: "/admin/dashboard" },
+    { label: "Rooms", path: "/admin/rooms" },
+    { label: "Staff", path: "/admin/staff" },
+    { label: "Reviews", path: "/admin/reviews" },
+    { label: "Maintenance", path: "/admin/maintenance" },
   ],
 };
 
@@ -43,54 +39,50 @@ const Sidebar = ({ isOpen, onClose }) => {
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 z-20 lg:hidden" onClick={onClose} />
+        <div className="fixed inset-0 bg-[#0B1F3A]/60 z-20 lg:hidden" onClick={onClose} />
       )}
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-slate-900 border-r border-slate-700
+        fixed top-0 left-0 h-full w-64 bg-[#0B1F3A] border-r border-[#C9A24B]/20
         flex flex-col z-30 transform transition-transform duration-300 ease-in-out
+        ${body}
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0 lg:static lg:z-auto
       `}>
-        <div className="px-6 py-5 border-b border-slate-700">
-          <div className="flex items-center gap-2">
-            <Hotel className="text-amber-400" size={22} />
-            <div>
-              <p className="text-amber-400 font-bold text-base leading-tight">Fahari Grand</p>
-              <p className="text-slate-500 text-xs italic">Where magnificence lives.</p>
-            </div>
-          </div>
+        <div className="px-6 py-5 border-b border-[#C9A24B]/20">
+          <p className={`${display} text-[#C9A24B] font-bold text-lg`}>Fahari Grand</p>
+          <p className="text-white text-xs italic mt-0.5">Where magnificence lives.</p>
         </div>
 
-        <div className="px-6 py-4 border-b border-slate-700">
-          <p className="text-white font-semibold text-sm">
+        <div className="px-6 py-4 border-b border-[#C9A24B]/20">
+          <p className="text-white font-bold text-sm">
             {user?.first_name} {user?.last_name}
           </p>
-          <p className="text-slate-400 text-xs mt-0.5 capitalize">{role}</p>
+          <p className="text-[#C9A24B] text-xs mt-0.5 capitalize font-semibold">{role}</p>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navItems.map(({ label, path, icon: Icon }) => (
+          {navItems.map(({ label, path }) => (
             <NavLink
               key={path}
               to={path}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                ${isActive ? "bg-amber-400 text-slate-900" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`
+                `block px-3 py-2.5 rounded text-sm font-bold transition-colors
+                ${isActive
+                  ? "bg-[#C9A24B] text-[#0B1F3A]"
+                  : "text-white hover:text-[#C9A24B]"}`
               }
             >
-              <Icon size={18} />
               {label}
             </NavLink>
           ))}
         </nav>
 
-        <div className="px-3 py-4 border-t border-slate-700">
+        <div className="px-3 py-4 border-t border-[#C9A24B]/20">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-colors"
+            className="w-full px-3 py-2.5 rounded text-sm font-bold text-white hover:text-[#C9A24B] transition-colors text-left"
           >
-            <LogOut size={18} />
             Logout
           </button>
         </div>

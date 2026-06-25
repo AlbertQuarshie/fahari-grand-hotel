@@ -35,7 +35,7 @@ function App() {
           <Route
             path="/unauthorized"
             element={
-              <div className="min-h-screen flex items-center justify-center bg-slate-900 text-white">
+              <div className="min-h-screen flex items-center justify-center bg-[#FAF8F3] text-[#0B1F3A] font-['Source_Sans_Pro',_sans-serif] font-bold">
                 You are not authorized to view this page.
               </div>
             }

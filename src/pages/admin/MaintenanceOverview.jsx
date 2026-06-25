@@ -2,30 +2,20 @@ import { useEffect, useState } from "react";
 import {
   getAllMaintenance, updateMaintenanceStatus,
   getAllHousekeeping, createHousekeepingTask, updateHousekeepingTask,
+  getAllRooms,
 } from "../../api/admin.api";
 import { getStaffList } from "../../api/staff.api";
-import { getAllRooms } from "../../api/admin.api";
-import { Wrench, CheckSquare, RefreshCw, Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import toast from "react-hot-toast";
+import Pagination from "../../components/shared/Pagination";
+import { usePagination } from "../../hooks/usePagination";
+import {
+  display, pageTitle, pageSubtitle, card,
+  btnPrimary, btnOutline, input, select,
+  emptyState, skeleton, badge,
+} from "../../constants/theme";
 
-const priorityStyles = {
-  low: "bg-slate-500/10 text-slate-400 border border-slate-500/20",
-  medium: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-  high: "bg-red-500/10 text-red-400 border border-red-500/20",
-};
-
-const maintenanceStatusStyles = {
-  open: "bg-red-500/10 text-red-400 border border-red-500/20",
-  in_progress: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-  resolved: "bg-green-500/10 text-green-400 border border-green-500/20",
-};
-
-const housekeepingStatusStyles = {
-  dirty: "bg-red-500/10 text-red-400 border border-red-500/20",
-  cleaning: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-  clean: "bg-green-500/10 text-green-400 border border-green-500/20",
-  inspected: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-};
+const ITEMS_PER_PAGE = 8;
 
 const AssignModal = ({ rooms, housekeepers, onClose, onSave }) => {
   const [form, setForm] = useState({ room: "", housekeeper: "", status: "dirty", notes: "" });
@@ -49,19 +39,18 @@ const AssignModal = ({ rooms, housekeepers, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-md">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
-          <h3 className="text-white font-bold">Assign Housekeeping Task</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white">
+    <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-md">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10">
+          <h3 className={`${display} text-[#0B1F3A] font-bold`}>Assign Housekeeping Task</h3>
+          <button onClick={onClose} className="text-[#0B1F3A]/50 hover:text-[#0B1F3A]">
             <X size={20} />
           </button>
         </div>
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Room *</label>
-            <select name="room" value={form.room} onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm">
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Room *</label>
+            <select name="room" value={form.room} onChange={handleChange} className={`w-full ${select}`}>
               <option value="">— Select room —</option>
               {rooms.map((r) => (
                 <option key={r.id} value={r.id}>Room {r.room_number} ({r.room_type})</option>
@@ -69,9 +58,8 @@ const AssignModal = ({ rooms, housekeepers, onClose, onSave }) => {
             </select>
           </div>
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Housekeeper *</label>
-            <select name="housekeeper" value={form.housekeeper} onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm">
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Housekeeper *</label>
+            <select name="housekeeper" value={form.housekeeper} onChange={handleChange} className={`w-full ${select}`}>
               <option value="">— Select housekeeper —</option>
               {housekeepers.map((h) => (
                 <option key={h.id} value={h.id}>{h.first_name} {h.last_name} (@{h.username})</option>
@@ -79,9 +67,8 @@ const AssignModal = ({ rooms, housekeepers, onClose, onSave }) => {
             </select>
           </div>
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Initial Status</label>
-            <select name="status" value={form.status} onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm">
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Initial Status</label>
+            <select name="status" value={form.status} onChange={handleChange} className={`w-full ${select}`}>
               <option value="dirty">Dirty</option>
               <option value="cleaning">Cleaning</option>
               <option value="clean">Clean</option>
@@ -89,18 +76,17 @@ const AssignModal = ({ rooms, housekeepers, onClose, onSave }) => {
             </select>
           </div>
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Notes</label>
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Notes</label>
             <textarea name="notes" value={form.notes} onChange={handleChange} rows={2}
               placeholder="Any special instructions..."
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm resize-none" />
+              className={`${input} resize-none`} />
           </div>
           <div className="flex gap-3 pt-2">
-            <button onClick={onClose}
-              className="flex-1 py-2.5 rounded-lg border border-slate-600 text-slate-300 hover:text-white transition text-sm font-semibold">
+            <button onClick={onClose} className={`flex-1 py-2.5 rounded text-sm ${btnOutline}`}>
               Cancel
             </button>
             <button onClick={handleSubmit} disabled={submitting}
-              className="flex-1 py-2.5 rounded-lg bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition disabled:opacity-50 text-sm">
+              className={`flex-1 py-2.5 rounded text-sm ${btnPrimary} disabled:opacity-50`}>
               {submitting ? "Assigning..." : "Assign Task"}
             </button>
           </div>
@@ -189,173 +175,187 @@ const MaintenanceOverview = () => {
   const openMaintenance = maintenance.filter((m) => m.status !== "resolved").length;
   const pendingHousekeeping = housekeeping.filter((h) => h.status !== "clean" && h.status !== "inspected").length;
 
+  const maintenancePagination = usePagination(maintenance, ITEMS_PER_PAGE);
+  const housekeepingPagination = usePagination(housekeeping, ITEMS_PER_PAGE);
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Maintenance & Housekeeping</h2>
-          <p className="text-slate-400 text-sm mt-1">
+          <h2 className={pageTitle}>Maintenance & Housekeeping</h2>
+          <p className={pageSubtitle}>
             Oversee maintenance requests and housekeeping assignments.
           </p>
         </div>
         <div className="flex gap-2">
           <button
             onClick={() => setShowAssignModal(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition text-sm"
+            className={`px-4 py-2.5 rounded text-sm ${btnPrimary}`}
           >
-            <Plus size={16} />
             Assign Task
           </button>
-          <button onClick={refresh}
-            className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition">
-            <RefreshCw size={16} />
+          <button onClick={refresh} className={`px-4 py-2 rounded text-sm ${btnOutline}`}>
+            Refresh
           </button>
         </div>
       </div>
 
-      {/* Summary */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Open Maintenance", value: openMaintenance, color: "text-red-400" },
-          { label: "Resolved", value: maintenance.filter((m) => m.status === "resolved").length, color: "text-green-400" },
-          { label: "Pending Cleaning", value: pendingHousekeeping, color: "text-amber-400" },
-          { label: "Clean Rooms", value: housekeeping.filter((h) => h.status === "clean" || h.status === "inspected").length, color: "text-green-400" },
+          { label: "Open Maintenance", value: openMaintenance, color: "text-red-700" },
+          { label: "Resolved", value: maintenance.filter((m) => m.status === "resolved").length, color: "text-emerald-700" },
+          { label: "Pending Cleaning", value: pendingHousekeeping, color: "text-[#C9A24B]" },
+          { label: "Clean Rooms", value: housekeeping.filter((h) => h.status === "clean" || h.status === "inspected").length, color: "text-emerald-700" },
         ].map(({ label, value, color }) => (
-          <div key={label} className="bg-slate-800 rounded-xl border border-slate-700 p-4 text-center">
-            <p className={`font-bold text-2xl ${color}`}>{value}</p>
-            <p className="text-slate-400 text-xs mt-1">{label}</p>
+          <div key={label} className={`${card} p-4 text-center`}>
+            <p className={`${display} font-bold text-2xl ${color}`}>{value}</p>
+            <p className="text-[#0B1F3A]/60 text-xs mt-1 font-semibold">{label}</p>
           </div>
         ))}
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-slate-800 rounded-xl p-1 border border-slate-700">
+      <div className="flex gap-1 bg-white rounded border border-[#0B1F3A]/10 p-1">
         <button
           onClick={() => setActiveTab("maintenance")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition ${
-            activeTab === "maintenance" ? "bg-amber-400 text-slate-900" : "text-slate-400 hover:text-white"
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded text-sm font-bold transition ${
+            activeTab === "maintenance" ? btnPrimary : "text-[#0B1F3A]/60 hover:text-[#0B1F3A]"
           }`}
         >
-          <Wrench size={15} />
           Maintenance Requests
           {openMaintenance > 0 && (
-            <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${activeTab === "maintenance" ? "bg-slate-900/30 text-slate-900" : "bg-red-400/20 text-red-400"}`}>
+            <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
+              activeTab === "maintenance" ? "bg-[#0B1F3A]/10 text-[#0B1F3A]" : "bg-red-100 text-red-700"
+            }`}>
               {openMaintenance}
             </span>
           )}
         </button>
         <button
           onClick={() => setActiveTab("housekeeping")}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition ${
-            activeTab === "housekeeping" ? "bg-amber-400 text-slate-900" : "text-slate-400 hover:text-white"
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded text-sm font-bold transition ${
+            activeTab === "housekeeping" ? btnPrimary : "text-[#0B1F3A]/60 hover:text-[#0B1F3A]"
           }`}
         >
-          <CheckSquare size={15} />
           Housekeeping
           {pendingHousekeeping > 0 && (
-            <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${activeTab === "housekeeping" ? "bg-slate-900/30 text-slate-900" : "bg-amber-400/20 text-amber-400"}`}>
+            <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ${
+              activeTab === "housekeeping" ? "bg-[#0B1F3A]/10 text-[#0B1F3A]" : "bg-amber-100 text-amber-900"
+            }`}>
               {pendingHousekeeping}
             </span>
           )}
         </button>
       </div>
 
-      {/* Content */}
       {loading ? (
         <div className="space-y-3">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-24 bg-slate-800 rounded-xl animate-pulse border border-slate-700" />
+            <div key={i} className={`h-24 ${skeleton}`} />
           ))}
         </div>
       ) : activeTab === "maintenance" ? (
         maintenance.length === 0 ? (
-          <div className="text-center py-16 text-slate-500">
-            <Wrench size={36} className="mx-auto mb-3 opacity-30" />
+          <div className={emptyState}>
             <p>No maintenance requests.</p>
           </div>
         ) : (
+          <>
+            <div className="space-y-3">
+              {maintenancePagination.paginatedItems.map((req) => (
+                <div key={req.id} className={`${card} p-5 space-y-3`}>
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className={`${display} text-[#0B1F3A] font-bold`}>Room {req.room_number}</p>
+                        <span className={badge(req.priority)}>
+                          {req.priority} priority
+                        </span>
+                        <span className={badge(req.status)}>
+                          {req.status.replace("_", " ")}
+                        </span>
+                      </div>
+                      <p className="text-[#0B1F3A]/80 text-sm font-semibold">{req.description}</p>
+                      <p className="text-[#0B1F3A]/50 text-xs font-semibold">
+                        Reported by: {req.reported_by_username} · {new Date(req.created_at).toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <label className="text-[#0B1F3A]/70 text-sm font-semibold shrink-0">Update:</label>
+                    <select
+                      value={req.status}
+                      onChange={(e) => handleMaintenanceStatus(req.id, e.target.value)}
+                      className={`flex-1 ${select}`}
+                    >
+                      <option value="open">Open</option>
+                      <option value="in_progress">In Progress</option>
+                      <option value="resolved">Resolved</option>
+                    </select>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Pagination
+              page={maintenancePagination.page}
+              totalPages={maintenancePagination.totalPages}
+              onPageChange={maintenancePagination.setPage}
+              totalItems={maintenancePagination.totalItems}
+              itemsPerPage={ITEMS_PER_PAGE}
+            />
+          </>
+        )
+      ) : housekeeping.length === 0 ? (
+        <div className={emptyState}>
+          <p>No housekeeping tasks assigned.</p>
+        </div>
+      ) : (
+        <>
           <div className="space-y-3">
-            {maintenance.map((req) => (
-              <div key={req.id} className="bg-slate-800 rounded-xl border border-slate-700 p-5 space-y-3">
+            {housekeepingPagination.paginatedItems.map((task) => (
+              <div key={task.id} className={`${card} p-5 space-y-3`}>
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-white font-bold">Room {req.room_number}</p>
-                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize ${priorityStyles[req.priority]}`}>
-                        {req.priority} priority
-                      </span>
-                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize ${maintenanceStatusStyles[req.status]}`}>
-                        {req.status.replace("_", " ")}
+                      <p className={`${display} text-[#0B1F3A] font-bold`}>Room {task.room_number}</p>
+                      <span className={badge(task.status === "cleaning" ? "cleaning" : task.status)}>
+                        {task.status}
                       </span>
                     </div>
-                    <p className="text-slate-300 text-sm">{req.description}</p>
-                    <p className="text-slate-500 text-xs">
-                      Reported by: {req.reported_by_username} · {new Date(req.created_at).toLocaleDateString("en-KE", { year: "numeric", month: "short", day: "numeric" })}
+                    <p className="text-[#0B1F3A]/70 text-sm font-semibold">
+                      Assigned to: <span className="text-[#0B1F3A]">{task.housekeeper_name}</span>
                     </p>
+                    {task.notes && (
+                      <p className="text-[#0B1F3A]/50 text-xs italic font-semibold">{task.notes}</p>
+                    )}
+                    <p className="text-[#0B1F3A]/50 text-xs font-semibold">Date: {task.assigned_date}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <label className="text-slate-400 text-sm shrink-0">Update:</label>
+                  <label className="text-[#0B1F3A]/70 text-sm font-semibold shrink-0">Update:</label>
                   <select
-                    value={req.status}
-                    onChange={(e) => handleMaintenanceStatus(req.id, e.target.value)}
-                    className="flex-1 px-3 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
+                    value={task.status}
+                    onChange={(e) => handleHousekeepingStatus(task.id, e.target.value)}
+                    className={`flex-1 ${select}`}
                   >
-                    <option value="open">Open</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="resolved">Resolved</option>
+                    <option value="dirty">Dirty</option>
+                    <option value="cleaning">Cleaning</option>
+                    <option value="clean">Clean</option>
+                    <option value="inspected">Inspected</option>
                   </select>
                 </div>
               </div>
             ))}
           </div>
-        )
-      ) : housekeeping.length === 0 ? (
-        <div className="text-center py-16 text-slate-500">
-          <CheckSquare size={36} className="mx-auto mb-3 opacity-30" />
-          <p>No housekeeping tasks assigned.</p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {housekeeping.map((task) => (
-            <div key={task.id} className="bg-slate-800 rounded-xl border border-slate-700 p-5 space-y-3">
-              <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-white font-bold">Room {task.room_number}</p>
-                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize ${housekeepingStatusStyles[task.status]}`}>
-                      {task.status}
-                    </span>
-                  </div>
-                  <p className="text-slate-400 text-sm">
-                    Assigned to: <span className="text-slate-300">{task.housekeeper_name}</span>
-                  </p>
-                  {task.notes && (
-                    <p className="text-slate-500 text-xs italic">{task.notes}</p>
-                  )}
-                  <p className="text-slate-500 text-xs">Date: {task.assigned_date}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <label className="text-slate-400 text-sm shrink-0">Update:</label>
-                <select
-                  value={task.status}
-                  onChange={(e) => handleHousekeepingStatus(task.id, e.target.value)}
-                  className="flex-1 px-3 py-2 rounded-lg bg-slate-700 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-                >
-                  <option value="dirty">Dirty</option>
-                  <option value="cleaning">Cleaning</option>
-                  <option value="clean">Clean</option>
-                  <option value="inspected">Inspected</option>
-                </select>
-              </div>
-            </div>
-          ))}
-        </div>
+          <Pagination
+            page={housekeepingPagination.page}
+            totalPages={housekeepingPagination.totalPages}
+            onPageChange={housekeepingPagination.setPage}
+            totalItems={housekeepingPagination.totalItems}
+            itemsPerPage={ITEMS_PER_PAGE}
+          />
+        </>
       )}
 
-      {/* Assign modal */}
       {showAssignModal && (
         <AssignModal
           rooms={rooms}

@@ -6,8 +6,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <p className="text-slate-300">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#FAF8F3]">
+        <p className="text-[#0B1F3A] font-semibold font-['Source_Sans_Pro',_sans-serif]">Loading...</p>
       </div>
     );
   }

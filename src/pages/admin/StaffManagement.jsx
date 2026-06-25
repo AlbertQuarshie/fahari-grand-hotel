@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { getStaffList, registerStaff, updateUser, deleteUser } from "../../api/staff.api";
-import { Users, Plus, Pencil, Trash2, X, Search, RefreshCw } from "lucide-react";
+import { X } from "lucide-react";
 import toast from "react-hot-toast";
+import Pagination from "../../components/shared/Pagination";
+import { usePagination } from "../../hooks/usePagination";
+import {
+  display, pageTitle, pageSubtitle, filterBar, card,
+  btnPrimary, btnOutline, btnDanger, input, select,
+  emptyState, skeleton, badge,
+} from "../../constants/theme";
 
-const roleStyles = {
-  admin: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-  receptionist: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-  housekeeper: "bg-green-500/10 text-green-400 border border-green-500/20",
-  guest: "bg-slate-500/10 text-slate-400 border border-slate-500/20",
-};
-
+const ITEMS_PER_PAGE = 10;
 const roleOptions = ["receptionist", "housekeeper", "admin"];
 
 const EMPTY_FORM = {
@@ -65,128 +66,83 @@ const StaffModal = ({ staff, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
-          <h3 className="text-white font-bold text-lg">
+    <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10">
+          <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>
             {staff ? "Edit Staff Member" : "Add New Staff Member"}
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition">
+          <button onClick={onClose} className="text-[#0B1F3A]/50 hover:text-[#0B1F3A] transition">
             <X size={20} />
           </button>
         </div>
 
         <div className="p-6 space-y-4">
-          {/* Name */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 text-sm mb-1">First Name *</label>
-              <input
-                name="first_name"
-                value={form.first_name}
-                onChange={handleChange}
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-              />
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">First Name *</label>
+              <input name="first_name" value={form.first_name} onChange={handleChange} className={input} />
             </div>
             <div>
-              <label className="block text-slate-300 text-sm mb-1">Last Name *</label>
-              <input
-                name="last_name"
-                value={form.last_name}
-                onChange={handleChange}
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-              />
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Last Name *</label>
+              <input name="last_name" value={form.last_name} onChange={handleChange} className={input} />
             </div>
           </div>
 
-          {/* Username */}
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Username *</label>
-            <input
-              name="username"
-              value={form.username}
-              onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-            />
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Username *</label>
+            <input name="username" value={form.username} onChange={handleChange} className={input} />
           </div>
 
-          {/* Email */}
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Email *</label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-            />
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Email *</label>
+            <input name="email" type="email" value={form.email} onChange={handleChange} className={input} />
           </div>
 
-          {/* Phone */}
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Phone</label>
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Phone</label>
             <input
               name="phone"
               type="tel"
               value={form.phone}
               onChange={handleChange}
               placeholder="e.g. 0712345678"
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
+              className={input}
             />
           </div>
 
-          {/* Role */}
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Role *</label>
-            <select
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-            >
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Role *</label>
+            <select name="role" value={form.role} onChange={handleChange} className={`w-full ${select}`}>
               {roleOptions.map((r) => (
-                <option key={r} value={r} className="capitalize">{r.charAt(0).toUpperCase() + r.slice(1)}</option>
+                <option key={r} value={r} className="capitalize">
+                  {r.charAt(0).toUpperCase() + r.slice(1)}
+                </option>
               ))}
             </select>
           </div>
 
-          {/* Password — only for new staff */}
           {!staff && (
             <>
               <div>
-                <label className="block text-slate-300 text-sm mb-1">Password *</label>
-                <input
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-                />
+                <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Password *</label>
+                <input name="password" type="password" value={form.password} onChange={handleChange} className={input} />
               </div>
               <div>
-                <label className="block text-slate-300 text-sm mb-1">Confirm Password *</label>
-                <input
-                  name="confirm_password"
-                  type="password"
-                  value={form.confirm_password}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-                />
+                <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Confirm Password *</label>
+                <input name="confirm_password" type="password" value={form.confirm_password} onChange={handleChange} className={input} />
               </div>
             </>
           )}
 
           <div className="flex gap-3 pt-2">
-            <button
-              onClick={onClose}
-              className="flex-1 py-2.5 rounded-lg border border-slate-600 text-slate-300 hover:text-white transition text-sm font-semibold"
-            >
+            <button onClick={onClose} className={`flex-1 py-2.5 rounded text-sm ${btnOutline}`}>
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex-1 py-2.5 rounded-lg bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition disabled:opacity-50 text-sm"
+              className={`flex-1 py-2.5 rounded text-sm ${btnPrimary} disabled:opacity-50`}
             >
               {submitting ? "Saving..." : staff ? "Save Changes" : "Add Staff"}
             </button>
@@ -200,22 +156,18 @@ const StaffModal = ({ staff, onClose, onSave }) => {
 const DeleteConfirm = ({ staff, onClose, onConfirm }) => {
   const [deleting, setDeleting] = useState(false);
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-2xl border border-red-500/30 w-full max-w-sm p-6 space-y-5 text-center">
-        <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto">
-          <Trash2 size={24} className="text-red-400" />
-        </div>
+    <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded border border-red-200 w-full max-w-sm p-6 space-y-5 text-center">
         <div>
-          <h3 className="text-white font-bold text-lg">Remove {staff.first_name}?</h3>
-          <p className="text-slate-400 text-sm mt-1">
-            This will permanently remove <span className="text-white">@{staff.username}</span> from the system.
+          <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>
+            Remove {staff.first_name}?
+          </h3>
+          <p className="text-[#0B1F3A]/70 text-sm mt-1 font-semibold">
+            This will permanently remove <span className="text-[#0B1F3A] font-bold">@{staff.username}</span> from the system.
           </p>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 rounded-lg border border-slate-600 text-slate-300 hover:text-white transition text-sm font-semibold"
-          >
+          <button onClick={onClose} className={`flex-1 py-2.5 rounded text-sm ${btnOutline}`}>
             Cancel
           </button>
           <button
@@ -225,7 +177,7 @@ const DeleteConfirm = ({ staff, onClose, onConfirm }) => {
               setDeleting(false);
             }}
             disabled={deleting}
-            className="flex-1 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-400 transition disabled:opacity-50 text-sm"
+            className={`flex-1 py-2.5 rounded text-sm ${btnDanger} disabled:opacity-50`}
           >
             {deleting ? "Removing..." : "Remove"}
           </button>
@@ -305,7 +257,9 @@ const StaffManagement = () => {
     return matchSearch && matchRole;
   });
 
-  // Summary counts
+  const { page, setPage, totalPages, paginatedItems, totalItems } =
+    usePagination(filtered, ITEMS_PER_PAGE);
+
   const counts = staff.reduce((acc, s) => {
     acc[s.role] = (acc[s.role] || 0) + 1;
     return acc;
@@ -313,148 +267,133 @@ const StaffManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Staff Management</h2>
-          <p className="text-slate-400 text-sm mt-1">
+          <h2 className={pageTitle}>Staff Management</h2>
+          <p className={pageSubtitle}>
             Manage all hotel staff accounts.
           </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition text-sm"
+          className={`px-4 py-2.5 rounded text-sm ${btnPrimary}`}
         >
-          <Plus size={16} />
           Add Staff
         </button>
       </div>
 
-      {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: "Total Staff", value: staff.length, color: "text-white" },
-          { label: "Receptionists", value: counts.receptionist || 0, color: "text-blue-400" },
-          { label: "Housekeepers", value: counts.housekeeper || 0, color: "text-green-400" },
-          { label: "Admins", value: counts.admin || 0, color: "text-amber-400" },
+          { label: "Total Staff", value: staff.length, color: "text-[#0B1F3A]" },
+          { label: "Receptionists", value: counts.receptionist || 0, color: "text-blue-700" },
+          { label: "Housekeepers", value: counts.housekeeper || 0, color: "text-emerald-700" },
+          { label: "Admins", value: counts.admin || 0, color: "text-[#C9A24B]" },
         ].map(({ label, value, color }) => (
-          <div key={label} className="bg-slate-800 rounded-xl border border-slate-700 p-4 space-y-1">
-            <p className="text-slate-400 text-xs">{label}</p>
-            <p className={`font-bold text-2xl ${color}`}>{value}</p>
+          <div key={label} className={`${card} p-4 space-y-1`}>
+            <p className="text-[#0B1F3A]/60 text-xs font-semibold">{label}</p>
+            <p className={`${display} font-bold text-2xl ${color}`}>{value}</p>
           </div>
         ))}
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Search staff..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 pr-4 py-2 bg-slate-800 text-slate-300 text-sm rounded-lg border border-slate-700 focus:border-amber-400 focus:outline-none w-52"
-          />
-        </div>
-        <select
-          value={filterRole}
-          onChange={(e) => setFilterRole(e.target.value)}
-          className="bg-slate-800 text-slate-300 text-sm rounded-lg px-3 py-2 border border-slate-700 focus:border-amber-400 focus:outline-none"
-        >
+      <div className={filterBar}>
+        <input
+          type="text"
+          placeholder="Search staff..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className={`${input} w-52`}
+        />
+        <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className={select}>
           <option value="">All Roles</option>
           <option value="receptionist">Receptionist</option>
           <option value="housekeeper">Housekeeper</option>
           <option value="admin">Admin</option>
         </select>
-        <button
-          onClick={refresh}
-          className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition"
-        >
-          <RefreshCw size={15} />
+        <button onClick={refresh} className={`px-4 py-2 rounded text-sm ${btnOutline}`}>
+          Refresh
         </button>
-        <span className="text-slate-500 text-sm ml-auto">
+        <span className="text-[#0B1F3A]/60 text-sm font-semibold ml-auto">
           {filtered.length} member{filtered.length !== 1 ? "s" : ""}
         </span>
       </div>
 
-      {/* Staff table */}
       {loading ? (
         <div className="space-y-3">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-16 bg-slate-800 rounded-xl animate-pulse border border-slate-700" />
+            <div key={i} className={`h-16 ${skeleton}`} />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 text-slate-500">
-          <Users size={36} className="mx-auto mb-3 opacity-30" />
+        <div className={emptyState}>
           <p>No staff members found.</p>
         </div>
       ) : (
-        <div className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
-          {/* Table header */}
-          <div className="hidden sm:grid grid-cols-5 gap-4 px-5 py-3 border-b border-slate-700 text-slate-500 text-xs font-semibold uppercase tracking-wide">
+        <div className={`${card} overflow-hidden`}>
+          <div className="hidden sm:grid grid-cols-5 gap-4 px-5 py-3 border-b border-[#0B1F3A]/10 text-[#0B1F3A]/60 text-xs font-bold uppercase tracking-wide">
             <span className="col-span-2">Name</span>
             <span>Role</span>
             <span>Phone</span>
             <span className="text-right">Actions</span>
           </div>
 
-          {/* Rows */}
-          <div className="divide-y divide-slate-700/50">
-            {filtered.map((member) => (
+          <div className="divide-y divide-[#0B1F3A]/10">
+            {paginatedItems.map((member) => (
               <div
                 key={member.id}
-                className="grid grid-cols-1 sm:grid-cols-5 gap-3 sm:gap-4 px-5 py-4 items-center hover:bg-slate-700/30 transition"
+                className="grid grid-cols-1 sm:grid-cols-5 gap-3 sm:gap-4 px-5 py-4 items-center hover:bg-[#FAF8F3] transition"
               >
-                {/* Name + username */}
                 <div className="sm:col-span-2 flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 font-bold text-sm shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-[#C9A24B]/10 border border-[#C9A24B]/30 flex items-center justify-center text-[#C9A24B] font-bold text-sm shrink-0">
                     {member.first_name[0]}{member.last_name[0]}
                   </div>
                   <div>
-                    <p className="text-white font-semibold text-sm">
+                    <p className="text-[#0B1F3A] font-bold text-sm">
                       {member.first_name} {member.last_name}
                     </p>
-                    <p className="text-slate-500 text-xs">@{member.username}</p>
-                    <p className="text-slate-500 text-xs">{member.email}</p>
+                    <p className="text-[#0B1F3A]/50 text-xs font-semibold">@{member.username}</p>
+                    <p className="text-[#0B1F3A]/50 text-xs font-semibold">{member.email}</p>
                   </div>
                 </div>
 
-                {/* Role */}
                 <div>
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full capitalize ${roleStyles[member.role] || roleStyles.guest}`}>
+                  <span className={badge(member.role)}>
                     {member.role}
                   </span>
                 </div>
 
-                {/* Phone */}
-                <p className="text-slate-400 text-sm">{member.phone || "—"}</p>
+                <p className="text-[#0B1F3A]/70 text-sm font-semibold">{member.phone || "—"}</p>
 
-                {/* Actions */}
                 <div className="flex gap-2 sm:justify-end">
                   <button
                     onClick={() => setEditStaff(member)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white transition text-xs font-semibold"
+                    className={`px-3 py-1.5 rounded text-xs font-bold ${btnOutline}`}
                   >
-                    <Pencil size={12} />
                     Edit
                   </button>
                   <button
                     onClick={() => setDeleteStaff(member)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition text-xs font-semibold"
+                    className="px-3 py-1.5 rounded text-xs font-bold text-red-700 border-2 border-red-200 hover:border-red-400 transition"
                   >
-                    <Trash2 size={12} />
                     Remove
                   </button>
                 </div>
               </div>
             ))}
           </div>
+
+          <div className="px-5 pb-5">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              totalItems={totalItems}
+              itemsPerPage={ITEMS_PER_PAGE}
+            />
+          </div>
         </div>
       )}
 
-      {/* Modals */}
       {showModal && (
         <StaffModal onClose={() => setShowModal(false)} onSave={handleCreate} />
       )}

@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import {
   getAllRooms, createRoom, updateRoom, deleteRoom,
 } from "../../api/admin.api";
-import {
-  BedDouble, Plus, Pencil, Trash2, X, Upload, RefreshCw,
-} from "lucide-react";
+import { X } from "lucide-react";
 import toast from "react-hot-toast";
+import Pagination from "../../components/shared/Pagination";
+import { usePagination } from "../../hooks/usePagination";
+import {
+  display, pageTitle, pageSubtitle, filterBar, cardHover,
+  btnPrimary, btnOutline, btnDanger, input, select,
+  emptyState, skeleton, badge,
+} from "../../constants/theme";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dmtfy0fnm/";
-
-const statusStyles = {
-  available: "bg-green-500/10 text-green-400 border border-green-500/20",
-  occupied: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-  cleaning: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-  maintenance: "bg-red-500/10 text-red-400 border border-red-500/20",
-};
+const ITEMS_PER_PAGE = 9;
 
 const EMPTY_FORM = {
   room_number: "",
@@ -79,32 +78,29 @@ const RoomModal = ({ room, onClose, onSave }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-2xl border border-slate-700 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-700">
-          <h3 className="text-white font-bold text-lg">
+    <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10">
+          <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>
             {room ? "Edit Room" : "Add New Room"}
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white transition">
+          <button onClick={onClose} className="text-[#0B1F3A]/50 hover:text-[#0B1F3A] transition">
             <X size={20} />
           </button>
         </div>
 
         <div className="p-6 space-y-4">
-          {/* Image upload */}
           <div>
-            <label className="block text-slate-300 text-sm mb-2">Room Image</label>
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-2">Room Image</label>
             <div
               onClick={() => document.getElementById("room-image-input").click()}
-              className="relative h-40 rounded-xl border-2 border-dashed border-slate-600 hover:border-amber-400 transition cursor-pointer overflow-hidden bg-slate-800"
+              className="relative h-40 rounded border-2 border-dashed border-[#0B1F3A]/20 hover:border-[#C9A24B] transition cursor-pointer overflow-hidden bg-[#FAF8F3]"
             >
               {preview ? (
                 <img src={preview} alt="Preview" className="w-full h-full object-cover" />
               ) : (
-                <div className="flex flex-col items-center justify-center h-full gap-2 text-slate-500">
-                  <Upload size={24} />
-                  <p className="text-sm">Click to upload image</p>
+                <div className="flex flex-col items-center justify-center h-full gap-2 text-[#0B1F3A]/50">
+                  <p className="text-sm font-semibold">Click to upload image</p>
                 </div>
               )}
             </div>
@@ -117,26 +113,20 @@ const RoomModal = ({ room, onClose, onSave }) => {
             />
           </div>
 
-          {/* Room number + type */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 text-sm mb-1">Room Number *</label>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Room Number *</label>
               <input
                 name="room_number"
                 value={form.room_number}
                 onChange={handleChange}
                 placeholder="e.g. 101"
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
+                className={input}
               />
             </div>
             <div>
-              <label className="block text-slate-300 text-sm mb-1">Room Type *</label>
-              <select
-                name="room_type"
-                value={form.room_type}
-                onChange={handleChange}
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-              >
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Room Type *</label>
+              <select name="room_type" value={form.room_type} onChange={handleChange} className={`w-full ${select}`}>
                 <option value="single">Single</option>
                 <option value="double">Double</option>
                 <option value="suite">Suite</option>
@@ -144,53 +134,46 @@ const RoomModal = ({ room, onClose, onSave }) => {
             </div>
           </div>
 
-          {/* Floor + capacity */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 text-sm mb-1">Floor *</label>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Floor *</label>
               <input
                 name="floor"
                 type="number"
                 value={form.floor}
                 onChange={handleChange}
                 placeholder="e.g. 1"
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
+                className={input}
               />
             </div>
             <div>
-              <label className="block text-slate-300 text-sm mb-1">Capacity *</label>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Capacity *</label>
               <input
                 name="capacity"
                 type="number"
                 value={form.capacity}
                 onChange={handleChange}
                 placeholder="e.g. 2"
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
+                className={input}
               />
             </div>
           </div>
 
-          {/* Price + status */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-300 text-sm mb-1">Price per Night (KES) *</label>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Price per Night (KES) *</label>
               <input
                 name="price_per_night"
                 type="number"
                 value={form.price_per_night}
                 onChange={handleChange}
                 placeholder="e.g. 5000"
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
+                className={input}
               />
             </div>
             <div>
-              <label className="block text-slate-300 text-sm mb-1">Status</label>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm"
-              >
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Status</label>
+              <select name="status" value={form.status} onChange={handleChange} className={`w-full ${select}`}>
                 <option value="available">Available</option>
                 <option value="occupied">Occupied</option>
                 <option value="cleaning">Cleaning</option>
@@ -199,31 +182,26 @@ const RoomModal = ({ room, onClose, onSave }) => {
             </div>
           </div>
 
-          {/* Description */}
           <div>
-            <label className="block text-slate-300 text-sm mb-1">Description</label>
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Description</label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
               rows={3}
               placeholder="Brief description of the room..."
-              className="w-full px-3 py-2 rounded-lg bg-slate-800 text-white border border-slate-600 focus:border-amber-400 focus:outline-none text-sm resize-none"
+              className={`${input} resize-none`}
             />
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 pt-2">
-            <button
-              onClick={onClose}
-              className="flex-1 py-2.5 rounded-lg border border-slate-600 text-slate-300 hover:border-slate-500 hover:text-white transition text-sm font-semibold"
-            >
+            <button onClick={onClose} className={`flex-1 py-2.5 rounded text-sm ${btnOutline}`}>
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="flex-1 py-2.5 rounded-lg bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition disabled:opacity-50 text-sm"
+              className={`flex-1 py-2.5 rounded text-sm ${btnPrimary} disabled:opacity-50`}
             >
               {submitting ? "Saving..." : room ? "Save Changes" : "Add Room"}
             </button>
@@ -238,22 +216,18 @@ const DeleteConfirm = ({ room, onClose, onConfirm }) => {
   const [deleting, setDeleting] = useState(false);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 rounded-2xl border border-red-500/30 w-full max-w-sm p-6 space-y-5 text-center">
-        <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto">
-          <Trash2 size={24} className="text-red-400" />
-        </div>
+    <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-white rounded border border-red-200 w-full max-w-sm p-6 space-y-5 text-center">
         <div>
-          <h3 className="text-white font-bold text-lg">Delete Room {room.room_number}?</h3>
-          <p className="text-slate-400 text-sm mt-1">
+          <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>
+            Delete Room {room.room_number}?
+          </h3>
+          <p className="text-[#0B1F3A]/70 text-sm mt-1 font-semibold">
             This action cannot be undone. All data for this room will be permanently removed.
           </p>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 py-2.5 rounded-lg border border-slate-600 text-slate-300 hover:text-white transition text-sm font-semibold"
-          >
+          <button onClick={onClose} className={`flex-1 py-2.5 rounded text-sm ${btnOutline}`}>
             Cancel
           </button>
           <button
@@ -263,7 +237,7 @@ const DeleteConfirm = ({ room, onClose, onConfirm }) => {
               setDeleting(false);
             }}
             disabled={deleting}
-            className="flex-1 py-2.5 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-400 transition disabled:opacity-50 text-sm"
+            className={`flex-1 py-2.5 rounded text-sm ${btnDanger} disabled:opacity-50`}
           >
             {deleting ? "Deleting..." : "Delete"}
           </button>
@@ -340,135 +314,131 @@ const RoomManagement = () => {
     return matchSearch && matchType;
   });
 
+  const { page, setPage, totalPages, paginatedItems, totalItems } =
+    usePagination(filtered, ITEMS_PER_PAGE);
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Room Management</h2>
-          <p className="text-slate-400 text-sm mt-1">
+          <h2 className={pageTitle}>Room Management</h2>
+          <p className={pageSubtitle}>
             Add, edit, and manage all hotel rooms.
           </p>
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-400 text-slate-900 font-semibold hover:bg-amber-300 transition text-sm"
+          className={`px-4 py-2.5 rounded text-sm ${btnPrimary}`}
         >
-          <Plus size={16} />
           Add Room
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3 items-center">
+      <div className={filterBar}>
         <input
           type="text"
           placeholder="Search by room number..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-slate-800 text-slate-300 text-sm rounded-lg px-3 py-2 border border-slate-700 focus:border-amber-400 focus:outline-none w-56"
+          className={`${input} w-56`}
         />
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-          className="bg-slate-800 text-slate-300 text-sm rounded-lg px-3 py-2 border border-slate-700 focus:border-amber-400 focus:outline-none"
-        >
+        <select value={filterType} onChange={(e) => setFilterType(e.target.value)} className={select}>
           <option value="">All Types</option>
           <option value="single">Single</option>
           <option value="double">Double</option>
           <option value="suite">Suite</option>
         </select>
-        <button
-          onClick={refresh}
-          className="p-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-400 hover:text-white transition"
-        >
-          <RefreshCw size={15} />
+        <button onClick={refresh} className={`px-4 py-2 rounded text-sm ${btnOutline}`}>
+          Refresh
         </button>
-        <span className="text-slate-500 text-sm ml-auto">
+        <span className="text-[#0B1F3A]/60 text-sm font-semibold ml-auto">
           {filtered.length} room{filtered.length !== 1 ? "s" : ""}
         </span>
       </div>
 
-      {/* Rooms grid */}
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-64 bg-slate-800 rounded-2xl animate-pulse border border-slate-700" />
+            <div key={i} className={`h-64 ${skeleton}`} />
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 text-slate-500">
-          <BedDouble size={40} className="mx-auto mb-3 opacity-30" />
+        <div className={emptyState}>
           <p>No rooms found.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filtered.map((room) => (
-            <div
-              key={room.id}
-              className="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden hover:border-slate-600 transition group"
-            >
-              {/* Image */}
-              <div className="relative h-44 bg-slate-700 overflow-hidden">
-                {room.image ? (
-                  <img
-                    src={`${CLOUDINARY_BASE}${room.image}`}
-                    alt={`Room ${room.room_number}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <BedDouble size={36} className="text-slate-600" />
-                  </div>
-                )}
-                <span className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full capitalize backdrop-blur-sm ${statusStyles[room.status] || statusStyles.maintenance}`}>
-                  {room.status}
-                </span>
-              </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {paginatedItems.map((room) => (
+              <div key={room.id} className={`${cardHover} overflow-hidden group`}>
+                <div className="relative h-44 bg-[#0B1F3A]/5 overflow-hidden">
+                  {room.image ? (
+                    <img
+                      src={`${CLOUDINARY_BASE}${room.image}`}
+                      alt={`Room ${room.room_number}`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className={`${display} text-[#0B1F3A]/40 font-bold text-lg`}>
+                        Room {room.room_number}
+                      </span>
+                    </div>
+                  )}
+                  <span className={`absolute top-3 right-3 ${badge(room.status)}`}>
+                    {room.status}
+                  </span>
+                </div>
 
-              {/* Info */}
-              <div className="p-4 space-y-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-white font-bold">Room {room.room_number}</h3>
-                    <p className="text-slate-400 text-xs capitalize">
-                      {room.room_type} · Floor {room.floor} · {room.capacity} guest{room.capacity > 1 ? "s" : ""}
+                <div className="p-4 space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className={`${display} text-[#0B1F3A] font-bold`}>
+                        Room {room.room_number}
+                      </h3>
+                      <p className="text-[#0B1F3A]/60 text-xs capitalize font-semibold">
+                        {room.room_type} · Floor {room.floor} · {room.capacity} guest{room.capacity > 1 ? "s" : ""}
+                      </p>
+                    </div>
+                    <p className="text-[#C9A24B] font-bold text-sm">
+                      KES {parseFloat(room.price_per_night).toLocaleString()}
+                      <span className="text-[#0B1F3A]/50 font-normal text-xs">/night</span>
                     </p>
                   </div>
-                  <p className="text-amber-400 font-bold text-sm">
-                    KES {parseFloat(room.price_per_night).toLocaleString()}
-                    <span className="text-slate-500 font-normal text-xs">/night</span>
-                  </p>
-                </div>
 
-                {room.description && (
-                  <p className="text-slate-500 text-xs line-clamp-2">{room.description}</p>
-                )}
+                  {room.description && (
+                    <p className="text-[#0B1F3A]/50 text-xs line-clamp-2 font-semibold">{room.description}</p>
+                  )}
 
-                {/* Actions */}
-                <div className="flex gap-2 pt-1">
-                  <button
-                    onClick={() => setEditRoom(room)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-white transition text-sm"
-                  >
-                    <Pencil size={13} />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => setDeleteRoom(room)}
-                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 transition text-sm"
-                  >
-                    <Trash2 size={13} />
-                    Delete
-                  </button>
+                  <div className="flex gap-2 pt-1">
+                    <button
+                      onClick={() => setEditRoom(room)}
+                      className={`flex-1 py-2 rounded text-sm ${btnOutline}`}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => setDeleteRoom(room)}
+                      className="flex-1 py-2 rounded text-sm text-red-700 font-bold border-2 border-red-200 hover:border-red-400 transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            totalItems={totalItems}
+            itemsPerPage={ITEMS_PER_PAGE}
+          />
+        </>
       )}
 
-      {/* Modals */}
       {showModal && (
         <RoomModal onClose={() => setShowModal(false)} onSave={handleCreate} />
       )}
