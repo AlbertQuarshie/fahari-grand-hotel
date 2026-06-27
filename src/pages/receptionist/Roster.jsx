@@ -1,20 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { getDailyRoster, checkInOut, confirmBooking } from "../../api/receptionist.api";
 import toast from "react-hot-toast";
+import ProfileButton from "../../components/shared/ProfileButton";
 import {
-  pageTitle,
-  pageSubtitle,
-  sectionLabel,
-  card,
-  badge,
-  btnPrimary,
-  btnNavy,
-  btnOutline,
-  btnGhost,
-  input,
-  emptyState,
-  skeleton,
-  display,
+  pageTitle, pageSubtitle, sectionLabel, card, badge,
+  btnPrimary, btnNavy, btnOutline, btnGhost, input, emptyState, skeleton, display,
 } from "../../constants/theme";
 
 const BookingRow = ({ booking, onAction }) => {
@@ -144,9 +134,7 @@ const Roster = () => {
       }
     };
     load();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [date]);
 
   const handleAction = async (bookingId, action) => {
@@ -166,14 +154,15 @@ const Roster = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Header row with profile button */}
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <h2 className={pageTitle}>Daily Roster</h2>
           <p className={pageSubtitle}>
             Manage check-ins, check-outs, and current guests.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <input
             type="date"
             value={date}
@@ -186,6 +175,7 @@ const Roster = () => {
           >
             Refresh
           </button>
+          <ProfileButton />
         </div>
       </div>
 

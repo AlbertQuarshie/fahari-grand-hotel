@@ -79,8 +79,8 @@ const RoomModal = ({ room, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10">
+      <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-3xl max-h-[95vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10 sticky top-0 bg-white">
           <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>
             {room ? "Edit Room" : "Add New Room"}
           </h3>
@@ -90,47 +90,49 @@ const RoomModal = ({ room, onClose, onSave }) => {
         </div>
 
         <div className="p-6 space-y-4">
-          <div>
-            <label className="block text-[#0B1F3A] text-sm font-semibold mb-2">Room Image</label>
-            <div
-              onClick={() => document.getElementById("room-image-input").click()}
-              className="relative h-40 rounded border-2 border-dashed border-[#0B1F3A]/20 hover:border-[#C9A24B] transition cursor-pointer overflow-hidden bg-[#FAF8F3]"
-            >
-              {preview ? (
-                <img src={preview} alt="Preview" className="w-full h-full object-cover" />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full gap-2 text-[#0B1F3A]/50">
-                  <p className="text-sm font-semibold">Click to upload image</p>
-                </div>
-              )}
-            </div>
-            <input
-              id="room-image-input"
-              type="file"
-              accept="image/*"
-              onChange={handleImage}
-              className="hidden"
-            />
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Room Number *</label>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-2">Room Image</label>
+              <div
+                onClick={() => document.getElementById("room-image-input").click()}
+                className="relative h-40 rounded border-2 border-dashed border-[#0B1F3A]/20 hover:border-[#C9A24B] transition cursor-pointer overflow-hidden bg-[#FAF8F3]"
+              >
+                {preview ? (
+                  <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full gap-2 text-[#0B1F3A]/50">
+                    <p className="text-sm font-semibold">Click to upload image</p>
+                  </div>
+                )}
+              </div>
               <input
-                name="room_number"
-                value={form.room_number}
-                onChange={handleChange}
-                placeholder="e.g. 101"
-                className={input}
+                id="room-image-input"
+                type="file"
+                accept="image/*"
+                onChange={handleImage}
+                className="hidden"
               />
             </div>
-            <div>
-              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Room Type *</label>
-              <select name="room_type" value={form.room_type} onChange={handleChange} className={`w-full ${select}`}>
-                <option value="single">Single</option>
-                <option value="double">Double</option>
-                <option value="suite">Suite</option>
-              </select>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Room Number *</label>
+                <input
+                  name="room_number"
+                  value={form.room_number}
+                  onChange={handleChange}
+                  placeholder="e.g. 101"
+                  className={input}
+                />
+              </div>
+              <div>
+                <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Room Type *</label>
+                <select name="room_type" value={form.room_type} onChange={handleChange} className={`w-full ${select}`}>
+                  <option value="single">Single</option>
+                  <option value="double">Double</option>
+                  <option value="suite">Suite</option>
+                </select>
+              </div>
             </div>
           </div>
 
@@ -182,7 +184,7 @@ const RoomModal = ({ room, onClose, onSave }) => {
             </div>
           </div>
 
-          <div>
+          <div className="col-span-2">
             <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Description</label>
             <textarea
               name="description"

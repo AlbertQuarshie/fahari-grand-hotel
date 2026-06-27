@@ -27,13 +27,18 @@ const roleNavItems = {
 };
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const { user, role, logout } = useAuth();
+  const { user, role, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const navItems = roleNavItems[role] || [];
 
   const handleLogout = () => {
     logout();
     navigate("/login");
+  };
+
+  const handleLoginClick = () => {
+    navigate("/login");
+    onClose();
   };
 
   return (
@@ -53,39 +58,58 @@ const Sidebar = ({ isOpen, onClose }) => {
           <p className="text-white text-xs italic mt-0.5">Where magnificence lives.</p>
         </div>
 
-        <div className="px-6 py-4 border-b border-[#C9A24B]/20">
-          <p className="text-white font-bold text-sm">
-            {user?.first_name} {user?.last_name}
-          </p>
-          <p className="text-[#C9A24B] text-xs mt-0.5 capitalize font-semibold">{role}</p>
-        </div>
+        {/* User info section — show only if authenticated */}
+        {isAuthenticated && user && (
+          <div className="px-6 py-4 border-b border-[#C9A24B]/20">
+            <p className="text-white font-bold text-sm">
+              {user?.first_name} {user?.last_name}
+            </p>
+            <p className="text-[#C9A24B] text-xs mt-0.5 capitalize font-semibold">{role}</p>
+          </div>
+        )}
 
+        {/* Navigation items */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {navItems.map(({ label, path }) => (
-            <NavLink
-              key={path}
-              to={path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `block px-3 py-2.5 rounded text-sm font-bold transition-colors
-                ${isActive
-                  ? "bg-[#C9A24B] text-[#0B1F3A]"
-                  : "text-white hover:text-[#C9A24B]"}`
-              }
-            >
-              {label}
-            </NavLink>
-          ))}
+          {isAuthenticated && navItems.length > 0 ? (
+            navItems.map(({ label, path }) => (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `block px-3 py-2.5 rounded text-sm font-bold transition-colors
+                  ${isActive
+                    ? "bg-[#C9A24B] text-[#0B1F3A]"
+                    : "text-white hover:text-[#C9A24B]"}`
+                }
+              >
+                {label}
+              </NavLink>
+            ))
+          ) : !isAuthenticated ? (
+            <div className="px-3 py-4 text-center space-y-3">
+              <p className="text-white text-sm font-semibold">Browse our rooms</p>
+              <button
+                onClick={handleLoginClick}
+                className="w-full px-3 py-2 rounded text-sm font-bold bg-[#C9A24B] text-[#0B1F3A] hover:bg-[#B8941F] transition"
+              >
+                Sign In to Book
+              </button>
+            </div>
+          ) : null}
         </nav>
 
-        <div className="px-3 py-4 border-t border-[#C9A24B]/20">
-          <button
-            onClick={handleLogout}
-            className="w-full px-3 py-2.5 rounded text-sm font-bold text-white hover:text-[#C9A24B] transition-colors text-left"
-          >
-            Logout
-          </button>
-        </div>
+        {/* Logout button — show only if authenticated */}
+        {isAuthenticated && (
+          <div className="px-3 py-4 border-t border-[#C9A24B]/20">
+            <button
+              onClick={handleLogout}
+              className="w-full px-3 py-2.5 rounded text-sm font-bold text-white hover:text-[#C9A24B] transition-colors text-left"
+            >
+              Logout
+            </button>
+          </div>
+        )}
       </aside>
     </>
   );

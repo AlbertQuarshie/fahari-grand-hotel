@@ -1,23 +1,15 @@
 import { useEffect, useState } from "react";
 import {
-  getMyTasks,
-  updateTaskStatus,
-  getMaintenanceRequests,
-  updateMaintenanceStatus,
+  getMyTasks, updateTaskStatus,
+  getMaintenanceRequests, updateMaintenanceStatus,
 } from "../../api/housekeeping.api";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import ProfileButton from "../../components/shared/ProfileButton";
 import {
-  pageTitle,
-  pageSubtitle,
-  card,
-  cardHover,
-  select,
-  emptyState,
-  skeleton,
-  badge,
-  display,
+  pageTitle, pageSubtitle, card, cardHover, select,
+  emptyState, skeleton, badge, display,
 } from "../../constants/theme";
 
 const ITEMS_PER_PAGE = 8;
@@ -83,15 +75,11 @@ const TaskCard = ({ task, onUpdate }) => {
           className={`flex-1 min-w-[140px] ${select} disabled:opacity-50`}
         >
           {taskStatusOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
         {updating && (
-          <span className="text-[#C9A24B] text-sm font-bold shrink-0">
-            Updating...
-          </span>
+          <span className="text-[#C9A24B] text-sm font-bold shrink-0">Updating...</span>
         )}
       </div>
     </div>
@@ -128,11 +116,8 @@ const MaintenanceCard = ({ request, onUpdate }) => {
           </p>
           <p className="text-[#0B1F3A]/70 text-xs font-semibold">
             {new Date(request.created_at).toLocaleDateString("en-KE", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
+              year: "numeric", month: "short", day: "numeric",
+              hour: "2-digit", minute: "2-digit",
             })}
           </p>
         </div>
@@ -157,15 +142,11 @@ const MaintenanceCard = ({ request, onUpdate }) => {
           className={`flex-1 min-w-[140px] ${select} disabled:opacity-50`}
         >
           {maintenanceStatusOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
         {updating && (
-          <span className="text-[#C9A24B] text-sm font-bold shrink-0">
-            Updating...
-          </span>
+          <span className="text-[#C9A24B] text-sm font-bold shrink-0">Updating...</span>
         )}
       </div>
     </div>
@@ -179,19 +160,13 @@ const TaskList = () => {
   const [activeTab, setActiveTab] = useState("tasks");
 
   const {
-    page: taskPage,
-    setPage: setTaskPage,
-    totalPages: taskTotalPages,
-    paginatedItems: paginatedTasks,
-    totalItems: taskTotalItems,
+    page: taskPage, setPage: setTaskPage,
+    totalPages: taskTotalPages, paginatedItems: paginatedTasks, totalItems: taskTotalItems,
   } = usePagination(tasks, ITEMS_PER_PAGE);
 
   const {
-    page: maintenancePage,
-    setPage: setMaintenancePage,
-    totalPages: maintenanceTotalPages,
-    paginatedItems: paginatedMaintenance,
-    totalItems: maintenanceTotalItems,
+    page: maintenancePage, setPage: setMaintenancePage,
+    totalPages: maintenanceTotalPages, paginatedItems: paginatedMaintenance, totalItems: maintenanceTotalItems,
   } = usePagination(maintenance, ITEMS_PER_PAGE);
 
   useEffect(() => {
@@ -219,16 +194,12 @@ const TaskList = () => {
 
   const handleTaskUpdate = async (id, status) => {
     await updateTaskStatus(id, status);
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status } : t))
-    );
+    setTasks((prev) => prev.map((t) => (t.id === id ? { ...t, status } : t)));
   };
 
   const handleMaintenanceUpdate = async (id, status) => {
     await updateMaintenanceStatus(id, status);
-    setMaintenance((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, status } : m))
-    );
+    setMaintenance((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
   };
 
   const pendingTasks = tasks.filter((t) => t.status !== "clean").length;
@@ -236,28 +207,30 @@ const TaskList = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className={pageTitle}>My Tasks</h2>
-        <p className={pageSubtitle}>
-          Manage your cleaning assignments and maintenance requests.
-        </p>
+      {/* Header row with profile button */}
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div>
+          <h2 className={pageTitle}>My Tasks</h2>
+          <p className={pageSubtitle}>
+            Manage your cleaning assignments and maintenance requests.
+          </p>
+        </div>
+        <div className="shrink-0">
+          <ProfileButton />
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className={`${card} p-4 space-y-1`}>
           <p className="text-[#0B1F3A] text-sm font-semibold">Cleaning Tasks</p>
-          <p className={`${display} text-[#0B1F3A] font-bold text-2xl`}>
-            {tasks.length}
-          </p>
+          <p className={`${display} text-[#0B1F3A] font-bold text-2xl`}>{tasks.length}</p>
           {pendingTasks > 0 && (
             <p className="text-[#C9A24B] text-xs font-bold">{pendingTasks} pending</p>
           )}
         </div>
         <div className={`${card} p-4 space-y-1`}>
           <p className="text-[#0B1F3A] text-sm font-semibold">Maintenance</p>
-          <p className={`${display} text-[#0B1F3A] font-bold text-2xl`}>
-            {maintenance.length}
-          </p>
+          <p className={`${display} text-[#0B1F3A] font-bold text-2xl`}>{maintenance.length}</p>
           {pendingMaintenance > 0 && (
             <p className="text-red-700 text-xs font-bold">{pendingMaintenance} unresolved</p>
           )}
@@ -275,13 +248,11 @@ const TaskList = () => {
         >
           Cleaning Tasks
           {pendingTasks > 0 && (
-            <span
-              className={`ml-2 text-xs px-1.5 py-0.5 rounded font-bold ${
-                activeTab === "tasks"
-                  ? "bg-[#0B1F3A]/20 text-[#0B1F3A]"
-                  : "bg-[#C9A24B]/20 text-[#C9A24B]"
-              }`}
-            >
+            <span className={`ml-2 text-xs px-1.5 py-0.5 rounded font-bold ${
+              activeTab === "tasks"
+                ? "bg-[#0B1F3A]/20 text-[#0B1F3A]"
+                : "bg-[#C9A24B]/20 text-[#C9A24B]"
+            }`}>
               {pendingTasks}
             </span>
           )}
@@ -296,13 +267,11 @@ const TaskList = () => {
         >
           Maintenance
           {pendingMaintenance > 0 && (
-            <span
-              className={`ml-2 text-xs px-1.5 py-0.5 rounded font-bold ${
-                activeTab === "maintenance"
-                  ? "bg-[#0B1F3A]/20 text-[#0B1F3A]"
-                  : "bg-red-100 text-red-900"
-              }`}
-            >
+            <span className={`ml-2 text-xs px-1.5 py-0.5 rounded font-bold ${
+              activeTab === "maintenance"
+                ? "bg-[#0B1F3A]/20 text-[#0B1F3A]"
+                : "bg-red-100 text-red-900"
+            }`}>
               {pendingMaintenance}
             </span>
           )}
@@ -317,9 +286,7 @@ const TaskList = () => {
         </div>
       ) : activeTab === "tasks" ? (
         tasks.length === 0 ? (
-          <div className={emptyState}>
-            <p>No cleaning tasks assigned.</p>
-          </div>
+          <div className={emptyState}><p>No cleaning tasks assigned.</p></div>
         ) : (
           <>
             <div className="space-y-3">
@@ -328,18 +295,13 @@ const TaskList = () => {
               ))}
             </div>
             <Pagination
-              page={taskPage}
-              totalPages={taskTotalPages}
-              onPageChange={setTaskPage}
-              totalItems={taskTotalItems}
-              itemsPerPage={ITEMS_PER_PAGE}
+              page={taskPage} totalPages={taskTotalPages} onPageChange={setTaskPage}
+              totalItems={taskTotalItems} itemsPerPage={ITEMS_PER_PAGE}
             />
           </>
         )
       ) : maintenance.length === 0 ? (
-        <div className={emptyState}>
-          <p>No maintenance requests.</p>
-        </div>
+        <div className={emptyState}><p>No maintenance requests.</p></div>
       ) : (
         <>
           <div className="space-y-3">
@@ -348,11 +310,8 @@ const TaskList = () => {
             ))}
           </div>
           <Pagination
-            page={maintenancePage}
-            totalPages={maintenanceTotalPages}
-            onPageChange={setMaintenancePage}
-            totalItems={maintenanceTotalItems}
-            itemsPerPage={ITEMS_PER_PAGE}
+            page={maintenancePage} totalPages={maintenanceTotalPages} onPageChange={setMaintenancePage}
+            totalItems={maintenanceTotalItems} itemsPerPage={ITEMS_PER_PAGE}
           />
         </>
       )}

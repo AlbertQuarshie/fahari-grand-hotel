@@ -4,6 +4,7 @@ import { getRooms } from "../../api/rooms.api";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import ProfileButton from "../../components/shared/ProfileButton";
 import {
   display, pageTitle, pageSubtitle, filterBar, select,
   cardHover, btnNavy, emptyState, skeleton, badge,
@@ -50,11 +51,17 @@ const RoomsBrowse = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className={pageTitle}>Available Rooms</h2>
-        <p className={pageSubtitle}>
-          Browse and book your perfect room at Fahari Grand.
-        </p>
+      {/* Header row with profile button */}
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div>
+          <h2 className={pageTitle}>Available Rooms</h2>
+          <p className={pageSubtitle}>
+            Browse and book your perfect room at Fahari Grand.
+          </p>
+        </div>
+        <div className="shrink-0">
+          <ProfileButton />
+        </div>
       </div>
 
       <div className={filterBar}>

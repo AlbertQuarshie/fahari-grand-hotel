@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getRooms } from "../api/rooms.api";
+import { getApprovedReviews } from "../api/reviews.api";
 import { Menu, X } from "lucide-react";
 import { display, body } from "../constants/theme";
 
@@ -46,6 +47,7 @@ const testimonials = [
 const Landing = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
+  const [reviews, setReviews] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -58,6 +60,19 @@ const Landing = () => {
       }
     };
     fetchRooms();
+  }, []);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const data = await getApprovedReviews();
+        setReviews(data.slice(0, 3));
+      } catch {
+        // If API fails, use placeholder testimonials
+        setReviews(null);
+      }
+    };
+    fetchReviews();
   }, []);
 
   const scrollTo = (id) =>
@@ -360,7 +375,7 @@ const Landing = () => {
 
           <div className="text-center mt-10">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/guest/rooms")}
               className="border-2 border-[#0B1F3A] text-[#0B1F3A] px-6 py-2.5 rounded hover:border-[#C9A24B] hover:text-[#C9A24B] transition text-sm font-bold"
             >
               View All Rooms
@@ -408,21 +423,21 @@ const Landing = () => {
             <h2 className={`${display} text-4xl font-bold text-[#0B1F3A]`}>What Our Guests Say</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {testimonials.map(({ name, role, text, avatar }) => (
+            {(reviews || testimonials).map((item) => (
               <div
-                key={name}
+                key={item.name || item.guest_name}
                 className="bg-[#FAF8F3] rounded p-6 space-y-4 border border-[#0B1F3A]/10 hover:border-[#C9A24B] transition"
               >
                 <p className={`${display} text-[#0B1F3A] text-base leading-relaxed italic`}>
-                  &ldquo;{text}&rdquo;
+                  &ldquo;{item.text || item.comment}&rdquo;
                 </p>
                 <div className="border-t border-[#0B1F3A]/10 pt-4 flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-[#0B1F3A] flex items-center justify-center text-[#C9A24B] font-bold text-xs">
-                    {avatar}
+                    {item.avatar || (item.guest_name || item.name)?.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div>
-                    <p className="text-[#0B1F3A] font-bold text-sm">{name}</p>
-                    <p className="text-[#0B1F3A] text-xs">{role}</p>
+                    <p className="text-[#0B1F3A] font-bold text-sm">{item.name || item.guest_name}</p>
+                    <p className="text-[#0B1F3A] text-xs">{item.role || (item.room_number ? `Room ${item.room_number}` : 'Guest')}</p>
                   </div>
                 </div>
               </div>

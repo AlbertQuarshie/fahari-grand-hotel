@@ -38,14 +38,14 @@ const Register = () => {
 
   return (
     <div className={`min-h-screen bg-[#FAF8F3] flex items-center justify-center px-4 py-10 ${body}`}>
-      <div className="w-full max-w-md bg-white rounded border border-[#0B1F3A]/10 shadow-sm p-8 space-y-6">
+      <div className="w-full max-w-2xl bg-white rounded border border-[#0B1F3A]/10 shadow-sm p-8 space-y-6">
         <div className="text-center space-y-1">
           <h1 className={`${display} text-3xl font-bold text-[#0B1F3A]`}>Fahari Grand</h1>
           <p className="text-[#C9A24B] text-sm italic font-semibold">Create your guest account</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-[#0B1F3A] font-bold mb-1">First Name</label>
               <input {...register("firstName", { required: true })} className={input} />
@@ -56,71 +56,76 @@ const Register = () => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Username</label>
-            <input
-              type="text"
-              {...register("username", { required: "Username is required" })}
-              className={input}
-            />
-            {errors.username && (
-              <p className="text-red-700 text-xs mt-1 font-semibold">{errors.username.message}</p>
-            )}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Username</label>
+              <input
+                type="text"
+                {...register("username", { required: "Username is required" })}
+                className={input}
+              />
+              {errors.username && (
+                <p className="text-red-700 text-xs mt-1 font-semibold">{errors.username.message}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Email</label>
+              <input
+                type="email"
+                {...register("email", { required: "Email is required" })}
+                className={input}
+              />
+              {errors.email && (
+                <p className="text-red-700 text-xs mt-1 font-semibold">{errors.email.message}</p>
+              )}
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Email</label>
-            <input
-              type="email"
-              {...register("email", { required: "Email is required" })}
-              className={input}
-            />
-            {errors.email && (
-              <p className="text-red-700 text-xs mt-1 font-semibold">{errors.email.message}</p>
-            )}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Phone</label>
+              <input
+                type="tel"
+                placeholder="2547XXXXXXXX"
+                {...register("phone", { required: "Phone number is required" })}
+                className={input}
+              />
+              {errors.phone && (
+                <p className="text-red-700 text-xs mt-1 font-semibold">{errors.phone.message}</p>
+              )}
+            </div>
+            <div />
           </div>
 
-          <div>
-            <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Phone</label>
-            <input
-              type="tel"
-              placeholder="2547XXXXXXXX"
-              {...register("phone", { required: "Phone number is required" })}
-              className={input}
-            />
-            {errors.phone && (
-              <p className="text-red-700 text-xs mt-1 font-semibold">{errors.phone.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Password</label>
-            <input
-              type="password"
-              {...register("password", {
-                required: "Password is required",
-                minLength: { value: 8, message: "At least 8 characters" },
-              })}
-              className={input}
-            />
-            {errors.password && (
-              <p className="text-red-700 text-xs mt-1 font-semibold">{errors.password.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Confirm Password</label>
-            <input
-              type="password"
-              {...register("confirmPassword", {
-                validate: (value) =>
-                  value === getValues("password") || "Passwords do not match",
-              })}
-              className={input}
-            />
-            {errors.confirmPassword && (
-              <p className="text-red-700 text-xs mt-1 font-semibold">{errors.confirmPassword.message}</p>
-            )}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Password</label>
+              <input
+                type="password"
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: { value: 8, message: "At least 8 characters" },
+                })}
+                className={input}
+              />
+              {errors.password && (
+                <p className="text-red-700 text-xs mt-1 font-semibold">{errors.password.message}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Confirm Password</label>
+              <input
+                type="password"
+                {...register("confirmPassword", {
+                  validate: (value) =>
+                    value === getValues("password") || "Passwords do not match",
+                })}
+                className={input}
+              />
+              {errors.confirmPassword && (
+                <p className="text-red-700 text-xs mt-1 font-semibold">{errors.confirmPassword.message}</p>
+              )}
+            </div>
           </div>
 
           <button
