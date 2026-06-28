@@ -1,43 +1,35 @@
-import axios from "axios";
+import api from "./axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-
-// Fetch approved reviews only
+// Get approved/all reviews — public, used on Landing page
 export const getApprovedReviews = async () => {
-  const response = await axios.get(`${API_BASE_URL}/reviews/approved/`);
+  const response = await api.get("/auth/reviews/");
   return response.data;
 };
 
-// Fetch all reviews (admin only)
+// Get current guest's own reviews — used in LeaveReview.jsx
+export const getMyReviews = async () => {
+  const response = await api.get("/auth/reviews/");
+  // Filter client-side to the logged-in user's reviews since there is
+  // no separate my-reviews endpoint on the backend.
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  if (!user) return [];
+  return response.data.filter((r) => r.guest === user.id || r.guest_username === user.username);
+};
+
+// Submit a new review — used in LeaveReview.jsx
+export const submitReview = async (reviewData) => {
+  const response = await api.post("/auth/reviews/", reviewData);
+  return response.data;
+};
+
+// Admin: get all reviews
 export const getAllReviews = async () => {
-  const response = await axios.get(`${API_BASE_URL}/reviews/`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("access")}`,
-    },
-  });
+  const response = await api.get("/auth/reviews/");
   return response.data;
 };
 
-// Create a review (guest only)
-export const createReview = async (reviewData) => {
-  const response = await axios.post(`${API_BASE_URL}/reviews/`, reviewData, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("access")}`,
-    },
-  });
-  return response.data;
-};
-
-// Update review status (admin only)
-export const updateReviewStatus = async (id, status) => {
-  const response = await axios.patch(
-    `${API_BASE_URL}/reviews/${id}/`,
-    { status },
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("access")}`,
-      },
-    }
-  );
+// Admin: update a review (e.g. approval status, if you keep that field)
+export const updateReviewStatus = async (id, payload) => {
+  const response = await api.patch(`/auth/reviews/${id}/`, payload);
   return response.data;
 };
