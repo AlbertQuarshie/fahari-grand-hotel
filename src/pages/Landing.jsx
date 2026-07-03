@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getRooms } from "../api/rooms.api";
 import { getApprovedReviews } from "../api/reviews.api";
+import { usePageTitle } from "../hooks/usePageTitle";
 import {
   Menu, X, Wifi, UtensilsCrossed, Car, ShieldCheck,
   MapPin, Phone, Mail, Clock, Star, Users, Building2, Award,
@@ -74,6 +75,7 @@ const testimonials = [
 ];
 
 const Landing = () => {
+  usePageTitle();
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [reviews, setReviews] = useState(null);

@@ -4,6 +4,7 @@ import { Star } from "lucide-react";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, pageTitle, pageSubtitle, card,
   btnOutline, emptyState, skeleton,
@@ -12,6 +13,7 @@ import {
 const ITEMS_PER_PAGE = 8;
 
 const ReviewModeration = () => {
+  usePageTitle("Review Moderation");
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actioning, setActioning] = useState(null);

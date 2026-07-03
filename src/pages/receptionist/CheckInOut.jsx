@@ -4,6 +4,7 @@ import { checkInOut } from "../../api/receptionist.api";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   pageTitle,
   pageSubtitle,
@@ -22,6 +23,7 @@ import {
 const ITEMS_PER_PAGE = 8;
 
 const CheckInOut = () => {
+  usePageTitle("Check In / Check Out");
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");

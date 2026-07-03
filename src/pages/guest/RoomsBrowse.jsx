@@ -4,6 +4,7 @@ import { getRooms } from "../../api/rooms.api";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import ProfileButton from "../../components/shared/ProfileButton";
 import {
   display, pageTitle, pageSubtitle, filterBar, select,
@@ -21,6 +22,7 @@ const roomTypeLabels = {
 const ITEMS_PER_PAGE = 9;
 
 const RoomsBrowse = () => {
+  usePageTitle("Browse Rooms");
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [roomType, setRoomType] = useState("");

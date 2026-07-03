@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, body, pageTitle, pageSubtitle, card,
   input, btnPrimary, btnNavy, skeleton, badge,
@@ -37,13 +38,6 @@ const EyeOffIcon = () => (
     <line x1="1" y1="1" x2="23" y2="23"/>
   </svg>
 );
-const CameraIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-    <circle cx="12" cy="13" r="4"/>
-  </svg>
-);
 
 const roleHome = {
   guest:        "/guest/rooms",
@@ -52,9 +46,9 @@ const roleHome = {
 };
 
 const ProfilePage = () => {
+  usePageTitle("My Profile");
   const navigate = useNavigate();
-  const { user: authUser, role } = useAuth();
-  const fileInputRef = useRef(null);
+  const { role } = useAuth();
 
   // Local copy of user so edits reflect immediately without touching AuthContext
   const [user, setUser] = useState(null);
@@ -70,8 +64,6 @@ const ProfilePage = () => {
   });
   const [passwordSaving, setPasswordSaving] = useState(false);
   const [showPw, setShowPw] = useState({ old: false, new: false, confirm: false });
-
-  const [avatarUploading, setAvatarUploading] = useState(false);
 
   // ── Load profile (uses the shared axios instance — token handled by interceptor) ──
   useEffect(() => {
@@ -128,7 +120,7 @@ const ProfilePage = () => {
     }
     setPasswordSaving(true);
     try {
-      await api.post("/auth/change-password/", {
+      await api.post("/auth/profile/change-password/", {
         old_password: passwordForm.old_password,
         new_password: passwordForm.new_password,
       });
@@ -143,30 +135,6 @@ const ProfilePage = () => {
       toast.error(msg);
     } finally {
       setPasswordSaving(false);
-    }
-  };
-
-  // ── Avatar upload ──────────────────────────────────────────────────────────
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith("image/")) { toast.error("Please select an image."); return; }
-    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5 MB."); return; }
-
-    const formData = new FormData();
-    formData.append("profile_picture", file);
-    setAvatarUploading(true);
-    try {
-      const { data } = await api.patch("/auth/me/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setUser((prev) => ({ ...prev, profile_picture: data.profile_picture }));
-      toast.success("Photo updated.");
-    } catch {
-      toast.error("Photo upload failed.");
-    } finally {
-      setAvatarUploading(false);
-      e.target.value = "";
     }
   };
 
@@ -219,34 +187,12 @@ const ProfilePage = () => {
 
         {/* ── Identity card ── */}
         <div className="bg-[#0B1F3A] rounded p-6 flex items-center gap-5">
-          <div
-            className="relative shrink-0 cursor-pointer group"
-            onClick={() => !avatarUploading && fileInputRef.current?.click()}
-          >
-            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#C9A24B]/40 flex items-center justify-center bg-[#13294B]">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
-              ) : (
-                <span className={`${display} text-[#C9A24B] font-bold text-xl`}>{initials}</span>
-              )}
-            </div>
-            {!avatarUploading && (
-              <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                <span className="text-white"><CameraIcon /></span>
-              </div>
+          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#C9A24B]/40 flex items-center justify-center bg-[#13294B] shrink-0">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+            ) : (
+              <span className={`${display} text-[#C9A24B] font-bold text-xl`}>{initials}</span>
             )}
-            {avatarUploading && (
-              <div className="absolute inset-0 rounded-full bg-black/60 flex items-center justify-center">
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              </div>
-            )}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleAvatarChange}
-            />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -256,32 +202,31 @@ const ProfilePage = () => {
               {role}
             </span>
           </div>
-
-          <p className="text-white/30 text-xs font-semibold hidden sm:block shrink-0">
-            Click photo to change
-          </p>
         </div>
 
         {/* ── Personal Information ── */}
         <div className={`${card} p-6 space-y-5`}>
           <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>Personal Information</h3>
+          <p className="text-[#0B1F3A]/50 text-xs font-semibold -mt-3">
+            Name and email are locked to prevent identity mix-ups. Contact support if these need to change.
+          </p>
           <form onSubmit={handleProfileSave} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[#0B1F3A] text-sm font-bold mb-1">First Name</label>
                 <input
-                  className={input}
+                  className={`${input} bg-[#0B1F3A]/5 text-[#0B1F3A]/60 cursor-not-allowed`}
                   value={profileForm.first_name}
-                  onChange={(e) => setProfileForm((p) => ({ ...p, first_name: e.target.value }))}
+                  disabled
                   placeholder="First name"
                 />
               </div>
               <div>
                 <label className="block text-[#0B1F3A] text-sm font-bold mb-1">Last Name</label>
                 <input
-                  className={input}
+                  className={`${input} bg-[#0B1F3A]/5 text-[#0B1F3A]/60 cursor-not-allowed`}
                   value={profileForm.last_name}
-                  onChange={(e) => setProfileForm((p) => ({ ...p, last_name: e.target.value }))}
+                  disabled
                   placeholder="Last name"
                 />
               </div>
@@ -289,10 +234,10 @@ const ProfilePage = () => {
             <div>
               <label className="block text-[#0B1F3A] text-sm font-bold mb-1">Email Address</label>
               <input
-                className={input}
+                className={`${input} bg-[#0B1F3A]/5 text-[#0B1F3A]/60 cursor-not-allowed`}
                 type="email"
                 value={profileForm.email}
-                onChange={(e) => setProfileForm((p) => ({ ...p, email: e.target.value }))}
+                disabled
                 placeholder="you@example.com"
               />
             </div>

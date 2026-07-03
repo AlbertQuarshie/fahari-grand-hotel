@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="96" fill="#0B1F3A"/>
+
+  <line x1="256" y1="140" x2="256" y2="372" stroke="#C9A24B" stroke-width="7" stroke-linecap="round"/>
+
+  <g fill="#C9A24B">
+    <ellipse cx="220" cy="165" rx="34" ry="14" transform="rotate(-35 220 165)"/>
+    <ellipse cx="292" cy="165" rx="34" ry="14" transform="rotate(35 292 165)"/>
+
+    <ellipse cx="210" cy="210" rx="38" ry="15.5" transform="rotate(-30 210 210)"/>
+    <ellipse cx="302" cy="210" rx="38" ry="15.5" transform="rotate(30 302 210)"/>
+
+    <ellipse cx="206" cy="257" rx="40" ry="16" transform="rotate(-26 206 257)"/>
+    <ellipse cx="306" cy="257" rx="40" ry="16" transform="rotate(26 306 257)"/>
+
+    <ellipse cx="210" cy="304" rx="38" ry="15" transform="rotate(-22 210 304)"/>
+    <ellipse cx="302" cy="304" rx="38" ry="15" transform="rotate(22 302 304)"/>
+
+    <ellipse cx="222" cy="345" rx="30" ry="12" transform="rotate(-16 222 345)"/>
+    <ellipse cx="290" cy="345" rx="30" ry="12" transform="rotate(16 290 345)"/>
+  </g>
+
+  <circle cx="256" cy="128" r="8" fill="#C9A24B"/>
+</svg>

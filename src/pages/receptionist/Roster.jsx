@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { getDailyRoster, checkInOut, confirmBooking } from "../../api/receptionist.api";
 import toast from "react-hot-toast";
 import ProfileButton from "../../components/shared/ProfileButton";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   pageTitle, pageSubtitle, sectionLabel, card, badge,
   btnPrimary, btnNavy, btnOutline, btnGhost, input, emptyState, skeleton, display,
@@ -104,6 +105,7 @@ const SectionCard = ({ title, subtitle, bookings, onAction, emptyMsg }) => (
 );
 
 const Roster = () => {
+  usePageTitle("Daily Roster");
   const [roster, setRoster] = useState(null);
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);

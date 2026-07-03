@@ -9,6 +9,7 @@ import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, pageTitle, pageSubtitle, card,
   btnPrimary, btnOutline, input, select,
@@ -97,6 +98,7 @@ const AssignModal = ({ rooms, housekeepers, onClose, onSave }) => {
 };
 
 const MaintenanceOverview = () => {
+  usePageTitle("Maintenance Overview");
   const [maintenance, setMaintenance] = useState([]);
   const [housekeeping, setHousekeeping] = useState([]);
   const [rooms, setRooms] = useState([]);

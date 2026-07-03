@@ -4,6 +4,7 @@ import { getMyBookings, cancelBooking } from "../../api/bookings.api";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   pageTitle, pageSubtitle, card, btnNavy, btnOutline,
   emptyState, skeleton, badge, display,
@@ -12,6 +13,7 @@ import {
 const ITEMS_PER_PAGE = 8;
 
 const MyBookings = () => {
+  usePageTitle("My Bookings");
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(null);

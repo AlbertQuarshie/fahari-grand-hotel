@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, pageTitle, pageSubtitle, filterBar, cardHover,
   btnPrimary, btnOutline, btnDanger, input, select,
@@ -250,6 +251,7 @@ const DeleteConfirm = ({ room, onClose, onConfirm }) => {
 };
 
 const RoomManagement = () => {
+  usePageTitle("Room Management");
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAdminDashboard } from "../../api/admin.api";
 import toast from "react-hot-toast";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, pageTitle, pageSubtitle, sectionLabel, card,
   btnOutline, skeleton, badge,
@@ -30,6 +31,7 @@ const ProgressBar = ({ label, value, total, barColor }) => (
 );
 
 const AnalyticsDashboard = () => {
+  usePageTitle("Admin Dashboard");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 

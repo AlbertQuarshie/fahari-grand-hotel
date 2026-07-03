@@ -5,6 +5,7 @@ import { getMyReviews, submitReview } from "../../api/reviews.api";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, pageTitle, pageSubtitle, card, cardHover,
   btnPrimary, emptyState, skeleton, badge,
@@ -13,6 +14,7 @@ import {
 const REVIEWS_PER_PAGE = 5;
 
 const LeaveReview = () => {
+  usePageTitle("Leave a Review");
   const [eligibleBookings, setEligibleBookings] = useState([]);
   const [myReviews, setMyReviews] = useState([]);
   const [loading, setLoading] = useState(true);

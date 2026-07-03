@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getRoom } from "../../api/rooms.api";
 import { createBooking } from "../../api/bookings.api";
 import toast from "react-hot-toast";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, card, input, btnNavy, btnGhost, skeleton, badge,
 } from "../../constants/theme";
@@ -21,6 +22,10 @@ const RoomDetail = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  usePageTitle(
+    room ? `${roomTypeLabels[room.room_type] || room.room_type} Room` : "Room Details"
+  );
 
   useEffect(() => {
     const fetchRoom = async () => {

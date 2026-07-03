@@ -3,11 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { initiatePayment, getPaymentStatus } from "../../api/payments.api";
 import { getMyBookings } from "../../api/bookings.api";
 import toast from "react-hot-toast";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, card, input, btnPrimary, btnNavy, btnGhost,
 } from "../../constants/theme";
 
 const BookingPayment = () => {
+  usePageTitle("Payment");
   const { id } = useParams();
   const navigate = useNavigate();
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createWalkInBooking } from "../../api/receptionist.api";
 import { getRooms } from "../../api/rooms.api";
 import toast from "react-hot-toast";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   pageTitle,
   pageSubtitle,
@@ -15,6 +16,7 @@ import {
 } from "../../constants/theme";
 
 const WalkInBooking = () => {
+  usePageTitle("Walk-In Booking");
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);

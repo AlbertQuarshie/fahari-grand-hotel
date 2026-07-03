@@ -3,9 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import { display, body, input, btnPrimary } from "../../constants/theme";
 
 const Register = () => {
+  usePageTitle("Register");
   const { register, handleSubmit, getValues, formState: { errors } } = useForm();
   const { register: registerGuest } = useAuth();
   const navigate = useNavigate();

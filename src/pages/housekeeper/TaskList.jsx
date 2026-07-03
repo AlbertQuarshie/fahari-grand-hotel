@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
 import ProfileButton from "../../components/shared/ProfileButton";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   pageTitle, pageSubtitle, card, cardHover, select,
   emptyState, skeleton, badge, display,
@@ -154,6 +155,7 @@ const MaintenanceCard = ({ request, onUpdate }) => {
 };
 
 const TaskList = () => {
+  usePageTitle("Housekeeping Tasks");
   const [tasks, setTasks] = useState([]);
   const [maintenance, setMaintenance] = useState([]);
   const [loading, setLoading] = useState(true);

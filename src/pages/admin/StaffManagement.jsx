@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   display, pageTitle, pageSubtitle, filterBar, card,
   btnPrimary, btnOutline, btnDanger, input, select,
@@ -188,6 +189,7 @@ const DeleteConfirm = ({ staff, onClose, onConfirm }) => {
 };
 
 const StaffManagement = () => {
+  usePageTitle("Staff Management");
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
