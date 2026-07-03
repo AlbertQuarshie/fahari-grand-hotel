@@ -349,16 +349,6 @@ const ProfilePage = () => {
                 {role}
               </span>
             </div>
-            <div className="flex items-center justify-between py-3">
-              <span className="text-[#0B1F3A]/60 text-sm font-semibold">Member since</span>
-              <span className="text-[#0B1F3A] font-bold text-sm">
-                {user.date_joined
-                  ? new Date(user.date_joined).toLocaleDateString("en-KE", {
-                      year: "numeric", month: "long", day: "numeric",
-                    })
-                  : "—"}
-              </span>
-            </div>
           </div>
         </div>
 
