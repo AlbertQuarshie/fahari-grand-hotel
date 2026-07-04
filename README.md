@@ -178,9 +178,17 @@ fahari-frontend/
 ---
 
 ## I. Screenshots
-
+1. Homepage
 ![Homepage](public/Homepage.png)
+
+2. Room Browsing
 ![Room Browsing](<public/Room Browsing.png>)
+
+3. Room Booking
 ![Room Booking](<public/Room Booking.png>)
+
+4. Booking Payment
 ![Booking Payment](<public/Booking Payment.png>)
+
+5. Admin Dashboard
 ![Admin Dashboard](<public/Admin Dashboard.png>)
