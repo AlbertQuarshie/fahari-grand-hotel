@@ -174,3 +174,13 @@ fahari-frontend/
 | Routing        | React Router Dom        |
 | Payments       | M-Pesa Daraja API       |
 | Deployment     | Vercel                  |
+
+---
+
+## I. Screenshots
+
+![Homepage](public/Homepage.png)
+![Room Browsing](<public/Room Browsing.png>)
+![Room Booking](<public/Room Booking.png>)
+![Booking Payment](<public/Booking Payment.png>)
+![Admin Dashboard](<public/Admin Dashboard.png>)
