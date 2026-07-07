@@ -13,10 +13,10 @@ function getInitials(firstName, lastName, username) {
   return "?";
 }
 
-function getAvatarUrl(path) {
+function getAvatarUrl(path, size = 64) {
   if (!path) return null;
   if (path.startsWith("http")) return path;
-  return CLOUDINARY + path;
+  return `${CLOUDINARY}image/upload/w_${size},h_${size},c_fill,g_face,q_auto,f_auto/${path}`;
 }
 
 /**

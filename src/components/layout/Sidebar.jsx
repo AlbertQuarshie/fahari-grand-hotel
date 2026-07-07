@@ -41,6 +41,11 @@ const Sidebar = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleHomeClick = () => {
+    navigate("/");
+    onClose();
+  };
+
   return (
     <>
       {isOpen && (
@@ -53,10 +58,16 @@ const Sidebar = ({ isOpen, onClose }) => {
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0 lg:static lg:z-auto
       `}>
-        <div className="px-6 py-5 border-b border-[#C9A24B]/20">
-          <p className={`${display} text-[#C9A24B] font-bold text-lg`}>Fahari Grand</p>
+        <button
+          onClick={handleHomeClick}
+          className="px-6 py-5 border-b border-[#C9A24B]/20 text-left w-full hover:bg-white/5 transition group"
+          title="Back to Home"
+        >
+          <p className={`${display} text-[#C9A24B] font-bold text-lg group-hover:text-white transition`}>
+            Fahari Grand
+          </p>
           <p className="text-white text-xs italic mt-0.5">Where magnificence lives.</p>
-        </div>
+        </button>
 
         {/* User info section — show only if authenticated */}
         {isAuthenticated && user && (

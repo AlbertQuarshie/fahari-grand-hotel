@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getRooms } from "../api/rooms.api";
 import { getApprovedReviews } from "../api/reviews.api";
 import { usePageTitle } from "../hooks/usePageTitle";
+import { useAuth } from "../hooks/useAuth";
 import {
   Menu, X, Wifi, UtensilsCrossed, Car, ShieldCheck,
   MapPin, Phone, Mail, Clock, Star, Users, Building2, Award,
@@ -17,6 +18,16 @@ import {
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dmtfy0fnm/";
 
 const roomTypeLabels = { single: "Single", double: "Double", suite: "Suite" };
+
+// Roles that land on /profile — admin goes to their dashboard instead
+const PROFILE_ROLES = ["guest", "receptionist", "housekeeper"];
+
+const signatureSuiteImages = [
+  "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80",
+  "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&q=80",
+  "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&q=80",
+  "https://images.unsplash.com/photo-1615874959474-d609969a20ed?w=900&q=80",
+];
 
 const amenities = [
   { icon: Wifi,            label: "High-Speed WiFi",  desc: "Complimentary, every room" },
@@ -77,6 +88,7 @@ const testimonials = [
 const Landing = () => {
   usePageTitle();
   const navigate = useNavigate();
+  const { user, role, isAuthenticated } = useAuth();
   const [rooms, setRooms] = useState([]);
   const [reviews, setReviews] = useState(null);
   const [displayedReviews, setDisplayedReviews] = useState(null);
@@ -84,6 +96,20 @@ const Landing = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeReview, setActiveReview] = useState(0);
+  const [activeSuiteImage, setActiveSuiteImage] = useState(0);
+
+  const initial =
+    user?.first_name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase();
+  const displayName = user?.first_name || user?.username;
+  const handleProfileClick = () =>
+    navigate(PROFILE_ROLES.includes(role) ? "/profile" : "/admin/dashboard");
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSuiteImage((prev) => (prev + 1) % signatureSuiteImages.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -138,8 +164,22 @@ const Landing = () => {
             <button onClick={() => scrollTo("why-us")}       className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>About</button>
             <button onClick={() => scrollTo("testimonials")} className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Reviews</button>
             <button onClick={() => scrollTo("contact")}      className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Contact</button>
-            <button onClick={() => navigate("/login")}        className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Sign In</button>
-            <button onClick={() => navigate("/register")}    className={`${btnPrimary} text-sm px-5 py-2 rounded`}>Book Now</button>
+
+            {isAuthenticated ? (
+              <button onClick={handleProfileClick} className="flex items-center gap-2.5 group pl-2" title="My Profile">
+                <span className="hidden md:block text-white text-sm font-semibold group-hover:text-[#C9A24B] transition">
+                  {displayName}
+                </span>
+                <div className="w-8 h-8 rounded-full bg-[#C9A24B] flex items-center justify-center text-[#0B1F3A] font-bold text-sm group-hover:ring-2 group-hover:ring-[#C9A24B] group-hover:ring-offset-2 group-hover:ring-offset-[#0B1F3A] transition-all">
+                  {initial}
+                </div>
+              </button>
+            ) : (
+              <>
+                <button onClick={() => navigate("/login")}     className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Sign In</button>
+                <button onClick={() => navigate("/register")}  className={`${btnPrimary} text-sm px-5 py-2 rounded`}>Book Now</button>
+              </>
+            )}
           </div>
 
           <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Open menu"} className="sm:hidden text-white hover:text-[#C9A24B] transition">
@@ -153,8 +193,23 @@ const Landing = () => {
             <button onClick={() => { scrollTo("why-us");       setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">About</button>
             <button onClick={() => { scrollTo("testimonials"); setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Reviews</button>
             <button onClick={() => { scrollTo("contact");      setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Contact</button>
-            <button onClick={() => navigate("/login")}         className="block text-white text-sm font-semibold w-full text-left py-2.5">Sign In</button>
-            <button onClick={() => navigate("/register")}     className={`block w-full ${btnPrimary} py-3 rounded text-sm mt-2`}>Book Now</button>
+
+            {isAuthenticated ? (
+              <button
+                onClick={() => { handleProfileClick(); setMenuOpen(false); }}
+                className="flex items-center gap-3 w-full text-left py-2.5"
+              >
+                <div className="w-8 h-8 rounded-full bg-[#C9A24B] flex items-center justify-center text-[#0B1F3A] font-bold text-sm shrink-0">
+                  {initial}
+                </div>
+                <span className="text-white text-sm font-semibold">{displayName}</span>
+              </button>
+            ) : (
+              <>
+                <button onClick={() => navigate("/login")}    className="block text-white text-sm font-semibold w-full text-left py-2.5">Sign In</button>
+                <button onClick={() => navigate("/register")} className={`block w-full ${btnPrimary} py-3 rounded text-sm mt-2`}>Book Now</button>
+              </>
+            )}
           </div>
         )}
       </nav>
@@ -230,12 +285,28 @@ const Landing = () => {
               {/* Left: image */}
               <div className="relative">
                 <div className="relative h-[480px] rounded overflow-hidden shadow-2xl">
-                  <img
-                    src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80"
-                    alt="Fahari Grand suite interior"
-                    className="w-full h-full object-cover"
-                  />
+                  {signatureSuiteImages.map((src, index) => (
+                    <img
+                      key={src}
+                      src={src}
+                      alt={`Fahari Grand suite interior - view ${index + 1}`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
+                        index === activeSuiteImage ? "opacity-100" : "opacity-0"
+                      }`}
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+                  ))}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B1F3A]/60 to-transparent" />
+                  <div className="absolute top-6 right-6 flex gap-1.5 z-10">
+                    {signatureSuiteImages.map((_, index) => (
+                      <span
+                        key={index}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          index === activeSuiteImage ? "w-5 bg-[#C9A24B]" : "w-1.5 bg-white/50"
+                        }`}
+                      />
+                    ))}
+                  </div>
                   <div className="absolute bottom-6 left-6 right-6">
                     <div className="bg-[#0B1F3A]/90 border border-[#C9A24B]/30 rounded px-5 py-4">
                       <p className={`${display} text-white text-sm font-bold`}>Signature Suite</p>
