@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { getRoom } from "../../api/rooms.api";
 import { createBooking } from "../../api/bookings.api";
 import toast from "react-hot-toast";
@@ -17,10 +17,11 @@ const today = new Date().toISOString().split("T")[0];
 const RoomDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [room, setRoom] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [checkIn, setCheckIn] = useState("");
-  const [checkOut, setCheckOut] = useState("");
+  const [checkIn, setCheckIn] = useState(searchParams.get("checkIn") || "");
+  const [checkOut, setCheckOut] = useState(searchParams.get("checkOut") || "");
   const [submitting, setSubmitting] = useState(false);
 
   usePageTitle(
@@ -53,6 +54,8 @@ const RoomDetail = () => {
   const totalPrice = room
     ? (nights * parseFloat(room.price_per_night)).toFixed(2)
     : "0.00";
+
+  const isBookable = room && room.status !== "maintenance";
 
   const handleBook = async () => {
     if (!checkIn || !checkOut) {
@@ -152,6 +155,12 @@ const RoomDetail = () => {
             Book This Room
           </h3>
 
+          {!isBookable && (
+            <p className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded px-3 py-2">
+              This room is currently under maintenance and can't be booked.
+            </p>
+          )}
+
           <div className="space-y-3">
             <div>
               <label className="block text-[#0B1F3A] text-sm font-bold mb-1">
@@ -202,12 +211,12 @@ const RoomDetail = () => {
 
           <button
             onClick={handleBook}
-            disabled={submitting || room.status !== "available" || nights <= 0}
+            disabled={submitting || !isBookable || nights <= 0}
             className={`w-full py-2.5 rounded text-sm ${btnNavy}`}
           >
             {submitting
               ? "Booking..."
-              : room.status !== "available"
+              : !isBookable
               ? "Room Unavailable"
               : nights > 0
               ? `Confirm Booking — KES ${parseFloat(totalPrice).toLocaleString()}`

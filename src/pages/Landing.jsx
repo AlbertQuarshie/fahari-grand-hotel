@@ -2,15 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getRooms } from "../api/rooms.api";
 import { getApprovedReviews } from "../api/reviews.api";
+import { sendContactMessage } from "../api/contact.api";
 import { usePageTitle } from "../hooks/usePageTitle";
 import { useAuth } from "../hooks/useAuth";
+import toast from "react-hot-toast";
 import {
   Menu, X, Wifi, UtensilsCrossed, Car, ShieldCheck,
   MapPin, Phone, Mail, Clock, Star, Users, Building2, Award,
 } from "lucide-react";
 import {
   display, body, sectionLabel,
-  card, cardHover,
+  card, cardHover, input,
   btnPrimary, btnNavy, btnOutline, btnGhost,
   skeleton,
 } from "../constants/theme";
@@ -21,6 +23,8 @@ const roomTypeLabels = { single: "Single", double: "Double", suite: "Suite" };
 
 // Roles that land on /profile — admin goes to their dashboard instead
 const PROFILE_ROLES = ["guest", "receptionist", "housekeeper"];
+
+const today = new Date().toISOString().split("T")[0];
 
 const signatureSuiteImages = [
   "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=900&q=80",
@@ -98,6 +102,12 @@ const Landing = () => {
   const [activeReview, setActiveReview] = useState(0);
   const [activeSuiteImage, setActiveSuiteImage] = useState(0);
 
+  const [searchCheckIn, setSearchCheckIn] = useState("");
+  const [searchCheckOut, setSearchCheckOut] = useState("");
+
+  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+
   const initial =
     user?.first_name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase();
   const displayName = user?.first_name || user?.username;
@@ -147,6 +157,29 @@ const Landing = () => {
   const handleViewMore = () => { setShowAllReviews(true); setDisplayedReviews(reviews); };
   const handleViewLess = () => { setShowAllReviews(false); setDisplayedReviews(reviews.slice(0, 3)); setActiveReview(0); };
   const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
+  const handleAvailabilitySearch = (e) => {
+    e.preventDefault();
+    if (!searchCheckIn || !searchCheckOut) {
+      toast.error("Please select both check-in and check-out dates.");
+      return;
+    }
+    navigate(`/guest/rooms?checkIn=${searchCheckIn}&checkOut=${searchCheckOut}`);
+  };
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    setContactSubmitting(true);
+    try {
+      await sendContactMessage(contactForm);
+      toast.success("Message sent — we'll get back to you shortly.");
+      setContactForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch {
+      toast.error("Couldn't send your message. Please try again.");
+    } finally {
+      setContactSubmitting(false);
+    }
+  };
 
   return (
     <div className={`min-h-screen bg-white ${body}`}>
@@ -244,6 +277,41 @@ const Landing = () => {
                 </button>
               </div>
             </div>
+
+            {/* Availability search */}
+            <form
+              onSubmit={handleAvailabilitySearch}
+              className="mt-10 bg-white rounded-lg shadow-2xl p-5 sm:p-6 max-w-3xl grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-4 sm:items-end"
+            >
+              <div>
+                <label className="block text-[#0B1F3A] text-xs font-bold mb-1">Check-in</label>
+                <input
+                  type="date"
+                  min={today}
+                  value={searchCheckIn}
+                  onChange={(e) => {
+                    setSearchCheckIn(e.target.value);
+                    if (searchCheckOut && e.target.value >= searchCheckOut) setSearchCheckOut("");
+                  }}
+                  className={input}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-[#0B1F3A] text-xs font-bold mb-1">Check-out</label>
+                <input
+                  type="date"
+                  min={searchCheckIn || today}
+                  value={searchCheckOut}
+                  onChange={(e) => setSearchCheckOut(e.target.value)}
+                  className={input}
+                  required
+                />
+              </div>
+              <button type="submit" className={`${btnPrimary} px-8 py-2.5 rounded h-[42px] whitespace-nowrap`}>
+                Check Availability
+              </button>
+            </form>
           </div>
         </section>
 
@@ -493,6 +561,135 @@ const Landing = () => {
           </div>
         </section>
 
+        {/* ── Contact Us ── */}
+        <section id="contact" className="py-24 px-6 bg-[#FAF8F3]">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-14">
+              <p className={`${sectionLabel} mb-3`}>Get In Touch</p>
+              <h2 className={`${display} text-4xl font-bold text-[#0B1F3A]`}>Contact Us</h2>
+              <p className="text-[#0B1F3A]/60 text-sm mt-2 max-w-md mx-auto">
+                Questions about a stay, a group booking, or anything else — we&apos;d love to hear from you.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">
+              {/* Info column */}
+              <div className="lg:col-span-2 space-y-6">
+                <div className={`${card} p-6 space-y-5`}>
+                  <div className="flex items-start gap-3">
+                    <MapPin size={18} className="text-[#C9A24B] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[#0B1F3A] font-bold text-sm">Address</p>
+                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">Westlands, Nairobi, Kenya</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Phone size={18} className="text-[#C9A24B] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[#0B1F3A] font-bold text-sm">Phone</p>
+                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">+254 700 000 000</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Mail size={18} className="text-[#C9A24B] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[#0B1F3A] font-bold text-sm">Email</p>
+                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">hello@faharigrande.co.ke</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Clock size={18} className="text-[#C9A24B] mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[#0B1F3A] font-bold text-sm">Reception</p>
+                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">Open 24 / 7</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Map */}
+                <div className="rounded overflow-hidden border border-[#0B1F3A]/10 h-56">
+                  <iframe
+                    title="Fahari Grand Hotel location"
+                    className="w-full h-full border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps?q=Westlands,Nairobi,Kenya&output=embed"
+                  />
+                </div>
+              </div>
+
+              {/* Form column */}
+              <div className="lg:col-span-3">
+                <form onSubmit={handleContactSubmit} className={`${card} p-6 sm:p-8 space-y-4`}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[#0B1F3A] text-xs font-bold mb-1">Full Name</label>
+                      <input
+                        type="text"
+                        value={contactForm.name}
+                        onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                        className={input}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#0B1F3A] text-xs font-bold mb-1">Email</label>
+                      <input
+                        type="email"
+                        value={contactForm.email}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        className={input}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[#0B1F3A] text-xs font-bold mb-1">Phone (optional)</label>
+                      <input
+                        type="tel"
+                        value={contactForm.phone}
+                        onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                        className={input}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[#0B1F3A] text-xs font-bold mb-1">Subject</label>
+                      <input
+                        type="text"
+                        value={contactForm.subject}
+                        onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
+                        className={input}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[#0B1F3A] text-xs font-bold mb-1">Message</label>
+                    <textarea
+                      rows={5}
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                      className={`${input} resize-none`}
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={contactSubmitting}
+                    className={`${btnNavy} px-8 py-3 rounded text-sm disabled:opacity-50`}
+                  >
+                    {contactSubmitting ? "Sending..." : "Send Message"}
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── Closing CTA band ── */}
         <section className="bg-[#0B1F3A] py-20 px-6 text-center relative overflow-hidden">
           <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1611348586804-61bf6c080437?w=1200&q=60')", backgroundSize: "cover", backgroundPosition: "center" }} />
@@ -516,7 +713,7 @@ const Landing = () => {
         </section>
 
         {/* ── Footer ── */}
-        <footer id="contact" className="bg-[#0B1F3A] border-t border-[#C9A24B]/15 text-white">
+        <footer className="bg-[#0B1F3A] border-t border-[#C9A24B]/15 text-white">
           <div className="max-w-6xl mx-auto px-6 py-14 grid grid-cols-1 sm:grid-cols-3 gap-10">
 
             {/* Brand */}
