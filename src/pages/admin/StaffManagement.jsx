@@ -68,8 +68,8 @@ const StaffModal = ({ staff, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10">
+      <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-3xl max-h-[95vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10 sticky top-0 bg-white">
           <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>
             {staff ? "Edit Staff Member" : "Add New Staff Member"}
           </h3>
@@ -90,41 +90,43 @@ const StaffModal = ({ staff, onClose, onSave }) => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Username *</label>
-            <input name="username" value={form.username} onChange={handleChange} className={input} />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Username *</label>
+              <input name="username" value={form.username} onChange={handleChange} className={input} />
+            </div>
+            <div>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Email *</label>
+              <input name="email" type="email" value={form.email} onChange={handleChange} className={input} />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Email *</label>
-            <input name="email" type="email" value={form.email} onChange={handleChange} className={input} />
-          </div>
-
-          <div>
-            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Phone</label>
-            <input
-              name="phone"
-              type="tel"
-              value={form.phone}
-              onChange={handleChange}
-              placeholder="e.g. 0712345678"
-              className={input}
-            />
-          </div>
-
-          <div>
-            <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Role *</label>
-            <select name="role" value={form.role} onChange={handleChange} className={`w-full ${select}`}>
-              {roleOptions.map((r) => (
-                <option key={r} value={r} className="capitalize">
-                  {r.charAt(0).toUpperCase() + r.slice(1)}
-                </option>
-              ))}
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Phone</label>
+              <input
+                name="phone"
+                type="tel"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="e.g. 0712345678"
+                className={input}
+              />
+            </div>
+            <div>
+              <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Role *</label>
+              <select name="role" value={form.role} onChange={handleChange} className={`w-full ${select}`}>
+                {roleOptions.map((r) => (
+                  <option key={r} value={r} className="capitalize">
+                    {r.charAt(0).toUpperCase() + r.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {!staff && (
-            <>
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Password *</label>
                 <input name="password" type="password" value={form.password} onChange={handleChange} className={input} />
@@ -133,7 +135,7 @@ const StaffModal = ({ staff, onClose, onSave }) => {
                 <label className="block text-[#0B1F3A] text-sm font-semibold mb-1">Confirm Password *</label>
                 <input name="confirm_password" type="password" value={form.confirm_password} onChange={handleChange} className={input} />
               </div>
-            </>
+            </div>
           )}
 
           <div className="flex gap-3 pt-2">

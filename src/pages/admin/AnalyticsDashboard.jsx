@@ -251,7 +251,7 @@ const AnalyticsDashboard = () => {
                 <p className="text-[#0B1F3A]/70 text-sm font-semibold">
                   Guest: <span className="text-[#0B1F3A]">{booking.guest_username}</span>
                 </p>
-                <p className="text-[#0B1F3A]/50 text-xs font-mono">{booking.booking_reference}</p>
+                <p className="text-[#0B1F3A]/50 text-xs tracking-wide">{booking.booking_reference}</p>
               </div>
               <div className="text-right">
                 <p className="text-[#C9A24B] font-bold">

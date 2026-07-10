@@ -100,7 +100,7 @@ const BookingPayment = () => {
         <p className={`${display} text-[#0B1F3A] font-bold text-lg`}>
           Room {booking.room_number}
         </p>
-        <p className="text-[#0B1F3A] text-sm font-mono font-semibold">
+        <p className="text-[#0B1F3A] text-sm tracking-wide font-semibold">
           {booking.booking_reference}
         </p>
         <p className="text-[#0B1F3A] text-sm font-semibold">
@@ -155,7 +155,7 @@ const BookingPayment = () => {
             <p className={`${display} text-[#0B1F3A] font-bold text-lg`}>Check Your Phone</p>
             <p className="text-[#0B1F3A] text-sm font-semibold">
               An M-Pesa prompt has been sent to{" "}
-              <span className="font-mono font-bold">{phone}</span>.
+              <span className="font-bold tracking-wide">{phone}</span>.
               Enter your PIN to complete the payment.
             </p>
           </div>
@@ -169,7 +169,7 @@ const BookingPayment = () => {
             </p>
             <p className="text-[#0B1F3A] font-semibold">
               Reference:{" "}
-              <span className="font-mono">{booking.booking_reference}</span>
+              <span className="tracking-wide">{booking.booking_reference}</span>
             </p>
           </div>
 
@@ -201,7 +201,7 @@ const BookingPayment = () => {
           {payment?.mpesa_receipt && (
             <p className="text-[#0B1F3A] text-sm font-semibold">
               M-Pesa Receipt:{" "}
-              <span className="font-mono font-bold">{payment.mpesa_receipt}</span>
+              <span className="font-bold tracking-wide">{payment.mpesa_receipt}</span>
             </p>
           )}
           <button

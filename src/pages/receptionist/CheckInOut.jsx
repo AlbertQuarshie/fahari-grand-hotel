@@ -131,7 +131,7 @@ const CheckInOut = () => {
                     Guest: {booking.guest_username}
                   </p>
                   <div className="flex items-center gap-3 text-xs text-[#0B1F3A]/70 font-semibold">
-                    <span className="font-mono">{booking.booking_reference}</span>
+                    <span className="tracking-wide">{booking.booking_reference}</span>
                     <span>{booking.check_in_date} → {booking.check_out_date}</span>
                   </div>
                 </div>

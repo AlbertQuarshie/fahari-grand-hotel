@@ -124,7 +124,7 @@ const WalkInBooking = () => {
           <div className="bg-[#FAF8F3] rounded p-4 text-left space-y-2 text-sm border border-[#0B1F3A]/10">
             <div className="flex justify-between">
               <span className="text-[#0B1F3A]/70 font-semibold">Reference</span>
-              <span className="text-[#0B1F3A] font-mono font-bold">
+              <span className="text-[#0B1F3A] font-bold tracking-wide">
                 {success.booking_reference}
               </span>
             </div>

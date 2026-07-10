@@ -34,7 +34,7 @@ const BookingRow = ({ booking, onAction }) => {
         <p className="text-[#0B1F3A] text-sm font-semibold">
           Guest: {booking.guest_username}
         </p>
-        <p className="text-[#0B1F3A]/70 text-xs font-mono font-semibold">
+        <p className="text-[#0B1F3A]/70 text-xs tracking-wide font-semibold">
           {booking.booking_reference}
         </p>
         <p className="text-[#0B1F3A]/70 text-xs font-semibold">

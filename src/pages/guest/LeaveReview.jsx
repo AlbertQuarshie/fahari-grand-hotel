@@ -150,7 +150,7 @@ const LeaveReview = () => {
                           <p className="text-[#0B1F3A] text-xs mt-0.5 font-semibold">
                             {booking.check_in_date} → {booking.check_out_date}
                           </p>
-                          <p className="text-[#0B1F3A] text-xs font-mono font-semibold">
+                          <p className="text-[#0B1F3A] text-xs tracking-wide font-semibold">
                             {booking.booking_reference}
                           </p>
                         </div>

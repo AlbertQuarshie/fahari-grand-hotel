@@ -1,10 +1,10 @@
 /* Fahari Grand design tokens — matches Landing.jsx
    Navy: #0B1F3A / #13294B  |  Ivory: #FAF8F3  |  Gold: #C9A24B
-   Display: Playfair Display  |  Body: Source Sans Pro
+   Display: Playfair Display  |  Body: Source Sans 3
 */
 
 export const display = "font-['Playfair_Display',_serif]";
-export const body = "font-['Source_Sans_Pro',_sans-serif]";
+export const body = "font-['Source_Sans_3',_sans-serif]";
 
 export const pageTitle = `${display} text-2xl sm:text-3xl font-bold text-[#0B1F3A]`;
 export const pageSubtitle = "text-[#0B1F3A] text-sm mt-1 font-semibold";

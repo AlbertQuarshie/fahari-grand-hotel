@@ -587,14 +587,14 @@ const Landing = () => {
                     <Phone size={18} className="text-[#C9A24B] mt-0.5 shrink-0" />
                     <div>
                       <p className="text-[#0B1F3A] font-bold text-sm">Phone</p>
-                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">+254 700 000 000</p>
+                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">+254 712 345 678</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <Mail size={18} className="text-[#C9A24B] mt-0.5 shrink-0" />
                     <div>
                       <p className="text-[#0B1F3A] font-bold text-sm">Email</p>
-                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">hello@faharigrande.co.ke</p>
+                      <p className="text-[#0B1F3A]/60 text-sm mt-0.5">faharigrandhotel@gmail.com</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -758,11 +758,11 @@ const Landing = () => {
                 </li>
                 <li className="flex items-center gap-3">
                   <Phone size={15} className="text-[#C9A24B] shrink-0" />
-                  <span className="text-white/60 text-sm">+254 700 000 000</span>
+                  <span className="text-white/60 text-sm">+254 712 345 678</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail size={15} className="text-[#C9A24B] shrink-0" />
-                  <span className="text-white/60 text-sm">hello@faharigrande.co.ke</span>
+                  <span className="text-white/60 text-sm">faharigrandhotel@gmail.com</span>
                 </li>
                 <li className="flex items-center gap-3">
                   <Clock size={15} className="text-[#C9A24B] shrink-0" />

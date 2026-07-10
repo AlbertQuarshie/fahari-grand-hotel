@@ -341,7 +341,7 @@ const ProfilePage = () => {
           <div className="divide-y divide-[#0B1F3A]/10">
             <div className="flex items-center justify-between py-3">
               <span className="text-[#0B1F3A]/60 text-sm font-semibold">Username</span>
-              <span className="text-[#0B1F3A] font-bold font-mono text-sm">@{user.username}</span>
+              <span className="text-[#0B1F3A] font-bold tracking-wide text-sm">@{user.username}</span>
             </div>
             <div className="flex items-center justify-between py-3">
               <span className="text-[#0B1F3A]/60 text-sm font-semibold">Role</span>

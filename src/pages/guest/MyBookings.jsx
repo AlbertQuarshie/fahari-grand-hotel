@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getMyBookings, cancelBooking } from "../../api/bookings.api";
 import toast from "react-hot-toast";
@@ -22,20 +22,41 @@ const MyBookings = () => {
   const { page, setPage, totalPages, paginatedItems, totalItems } =
     usePagination(bookings, ITEMS_PER_PAGE);
 
-  const fetchBookings = useCallback(async () => {
+  const fetchBookings = async () => {
     try {
       const data = await getMyBookings();
       setBookings(data);
     } catch {
       toast.error("Failed to load bookings.");
-    } finally {
-      setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings]);
+    let isMounted = true;
+
+    const loadBookings = async () => {
+      try {
+        const data = await getMyBookings();
+        if (isMounted) {
+          setBookings(data);
+        }
+      } catch {
+        if (isMounted) {
+          toast.error("Failed to load bookings.");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadBookings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleCancel = async (id) => {
     setCancelling(id);
@@ -90,7 +111,7 @@ const MyBookings = () => {
                   </div>
                   <p className="text-[#0B1F3A] text-sm font-semibold">
                     Ref:{" "}
-                    <span className="font-mono">{booking.booking_reference}</span>
+                    <span className="tracking-wide">{booking.booking_reference}</span>
                   </p>
                   <p className="text-[#0B1F3A] text-sm font-semibold">
                     {booking.check_in_date} → {booking.check_out_date}
