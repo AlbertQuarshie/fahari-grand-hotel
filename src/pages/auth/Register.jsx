@@ -88,7 +88,7 @@ const Register = () => {
               <label className="block text-sm text-[#0B1F3A] font-bold mb-1">Phone</label>
               <input
                 type="tel"
-                placeholder="2547XXXXXXXX"
+                placeholder="eg. 0712345678"
                 {...register("phone", { required: "Phone number is required" })}
                 className={input}
               />

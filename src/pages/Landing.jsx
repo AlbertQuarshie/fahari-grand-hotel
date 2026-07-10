@@ -193,8 +193,8 @@ const Landing = () => {
           </div>
 
           <div className="hidden sm:flex items-center gap-2">
-            <button onClick={() => scrollTo("rooms")}        className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Rooms</button>
             <button onClick={() => scrollTo("why-us")}       className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>About</button>
+            <button onClick={() => scrollTo("rooms")}        className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Rooms</button>
             <button onClick={() => scrollTo("testimonials")} className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Reviews</button>
             <button onClick={() => scrollTo("contact")}      className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Contact</button>
 
@@ -222,8 +222,8 @@ const Landing = () => {
 
         {menuOpen && (
           <div className="sm:hidden bg-[#0B1F3A] border-t border-[#C9A24B]/20 px-6 py-4 space-y-1">
-            <button onClick={() => { scrollTo("rooms");        setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Rooms</button>
             <button onClick={() => { scrollTo("why-us");       setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">About</button>
+            <button onClick={() => { scrollTo("rooms");        setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Rooms</button>
             <button onClick={() => { scrollTo("testimonials"); setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Reviews</button>
             <button onClick={() => { scrollTo("contact");      setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Contact</button>
 
