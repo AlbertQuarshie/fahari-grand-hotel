@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
-import { display, body } from "../../constants/theme";
+import { body } from "../../constants/theme";
 
 const roleNavItems = {
   guest: [
@@ -26,49 +27,38 @@ const roleNavItems = {
   ],
 };
 
+// Guest paths a public (unauthenticated) visitor can actually open
+const PUBLIC_GUEST_PATHS = ["/guest/rooms"];
+
 const Sidebar = ({ isOpen, onClose }) => {
   const { user, role, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const navItems = roleNavItems[role] || [];
+  // Public visitors browsing the site see the guest nav items too, so they
+  // know those sections exist — but only "Browse Rooms" is actually public.
+  const navItems = roleNavItems[role] || (!isAuthenticated ? roleNavItems.guest : []);
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
-  };
-
-  const handleLoginClick = () => {
-    navigate("/login");
-    onClose();
-  };
-
-  const handleHomeClick = () => {
     navigate("/");
+  };
+
+  const handleRestrictedClick = () => {
+    toast.error("Please sign in to access that page.");
     onClose();
   };
 
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-[#0B1F3A]/60 z-20 lg:hidden" onClick={onClose} />
+        <div className="fixed top-16 left-0 right-0 bottom-0 bg-[#0B1F3A]/60 z-20 lg:hidden" onClick={onClose} />
       )}
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-[#0B1F3A] border-r border-[#C9A24B]/20
+        fixed top-16 left-0 h-[calc(100%-4rem)] w-64 bg-[#0B1F3A] border-r border-[#C9A24B]/20
         flex flex-col z-30 transform transition-transform duration-300 ease-in-out
         ${body}
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        lg:translate-x-0 lg:static lg:z-auto
+        lg:translate-x-0 lg:static lg:h-full lg:z-auto
       `}>
-        <button
-          onClick={handleHomeClick}
-          className="px-6 py-5 border-b border-[#C9A24B]/20 text-left w-full hover:bg-white/5 transition group"
-          title="Back to Home"
-        >
-          <p className={`${display} text-[#C9A24B] font-bold text-lg group-hover:text-white transition`}>
-            Fahari Grand
-          </p>
-          <p className="text-white text-xs italic mt-0.5">Where magnificence lives.</p>
-        </button>
-
         {/* User info section — show only if authenticated */}
         {isAuthenticated && user && (
           <div className="px-6 py-4 border-b border-[#C9A24B]/20">
@@ -79,10 +69,26 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        {/* Navigation items */}
+        {/* Navigation items — shown to authenticated users and public visitors alike.
+            For public visitors, items outside PUBLIC_GUEST_PATHS are shown dimmed
+            and don't navigate — clicking them just surfaces a sign-in toast. */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          {isAuthenticated && navItems.length > 0 ? (
-            navItems.map(({ label, path }) => (
+          {navItems.map(({ label, path }) => {
+            const isRestricted = !isAuthenticated && !PUBLIC_GUEST_PATHS.includes(path);
+
+            if (isRestricted) {
+              return (
+                <button
+                  key={path}
+                  onClick={handleRestrictedClick}
+                  className="block w-full text-left px-3 py-2.5 rounded text-sm font-bold text-white/40 hover:text-white/60 transition-colors"
+                >
+                  {label}
+                </button>
+              );
+            }
+
+            return (
               <NavLink
                 key={path}
                 to={path}
@@ -96,21 +102,11 @@ const Sidebar = ({ isOpen, onClose }) => {
               >
                 {label}
               </NavLink>
-            ))
-          ) : !isAuthenticated ? (
-            <div className="px-3 py-4 text-center space-y-3">
-              <p className="text-white text-sm font-semibold">Browse our rooms</p>
-              <button
-                onClick={handleLoginClick}
-                className="w-full px-3 py-2 rounded text-sm font-bold bg-[#C9A24B] text-[#0B1F3A] hover:bg-[#B8941F] transition"
-              >
-                Sign In to Book
-              </button>
-            </div>
-          ) : null}
+            );
+          })}
         </nav>
 
-        {/* Logout button — show only if authenticated */}
+        {/* Logout — only shown to authenticated users; no sign-in CTA here */}
         {isAuthenticated && (
           <div className="px-3 py-4 border-t border-[#C9A24B]/20">
             <button

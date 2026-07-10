@@ -186,7 +186,7 @@ const Landing = () => {
 
       {/* ── Navbar ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0B1F3A]/95 backdrop-blur-sm border-b border-[#C9A24B]/20">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="h-16 flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-baseline gap-2">
             <span className={`${display} text-white font-bold text-lg tracking-wide`}>Fahari Grand</span>
             <span className="text-[#C9A24B] text-xs italic hidden sm:inline">Hotel &amp; Suites</span>
@@ -221,7 +221,7 @@ const Landing = () => {
         </div>
 
         {menuOpen && (
-          <div className="sm:hidden bg-[#0B1F3A] border-t border-[#C9A24B]/20 px-6 py-4 space-y-1">
+          <div className="sm:hidden bg-[#0B1F3A] border-t border-[#C9A24B]/20 px-4 lg:px-6 py-4 space-y-1">
             <button onClick={() => { scrollTo("why-us");       setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">About</button>
             <button onClick={() => { scrollTo("rooms");        setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Rooms</button>
             <button onClick={() => { scrollTo("testimonials"); setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Reviews</button>

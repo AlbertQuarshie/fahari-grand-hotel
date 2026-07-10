@@ -2,25 +2,21 @@ import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
 import { body } from "../../constants/theme";
 
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
 
   return (
-    <div className={`flex h-screen bg-[#FAF8F3] overflow-hidden ${body}`}>
-      {/* Show sidebar only for authenticated users */}
-      {isAuthenticated && (
+    <div className={`h-screen flex flex-col bg-[#FAF8F3] overflow-hidden ${body}`}>
+      {/* Navbar spans the full width at the top; Sidebar starts below it, not beside it */}
+      <Navbar onMenuClick={() => setSidebarOpen(true)} />
+
+      <div className="flex-1 flex min-w-0 overflow-hidden">
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
-      )}
-
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Navbar onMenuClick={() => setSidebarOpen(true)} />
 
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           <div className="max-w-6xl mx-auto">

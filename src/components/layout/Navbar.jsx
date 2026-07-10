@@ -23,10 +23,10 @@ const Navbar = ({ onMenuClick }) => {
   const displayName = user?.first_name || user?.username;
 
   return (
-    <header className="h-16 bg-[#0B1F3A] border-b border-[#C9A24B]/20 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-10">
+    <header className="h-16 bg-[#0B1F3A] border-b border-[#C9A24B]/20 flex items-center justify-between px-4 lg:px-6 relative z-40 shrink-0">
       <div className="flex items-center gap-3">
-        {/* Show menu button only for authenticated users (who have sidebar) */}
-        {isAuthenticated && (
+        {/* Menu button — only relevant on pages that render a Sidebar */}
+        {onMenuClick && (
           <button
             onClick={onMenuClick}
             aria-label="Open menu"
@@ -35,9 +35,28 @@ const Navbar = ({ onMenuClick }) => {
             <Menu size={20} />
           </button>
         )}
-        <h1 className={`${display} text-white font-bold text-sm sm:text-base`}>
-          {roleLabels[role] || "Fahari Grand"}
-        </h1>
+        {isAuthenticated ? (
+          <button
+            onClick={() => navigate("/")}
+            className={`${display} text-white font-bold text-sm sm:text-base hover:text-[#C9A24B] transition text-left`}
+            title="Back to Home"
+          >
+            {roleLabels[role]}
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate("/")}
+            className="flex items-baseline gap-2 group"
+            title="Back to Home"
+          >
+            <span className={`${display} text-white font-bold text-lg tracking-wide group-hover:text-[#C9A24B] transition`}>
+              Fahari Grand
+            </span>
+            <span className="text-[#C9A24B] text-xs italic hidden sm:inline">
+              Hotel &amp; Suites
+            </span>
+          </button>
+        )}
       </div>
 
       {/* Right side — profile for authenticated users, sign in button for guests */}
