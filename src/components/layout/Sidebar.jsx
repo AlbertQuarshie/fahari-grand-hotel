@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
 import { body } from "../../constants/theme";
@@ -31,16 +31,10 @@ const roleNavItems = {
 const PUBLIC_GUEST_PATHS = ["/guest/rooms"];
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const { user, role, logout, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  const { user, role, isAuthenticated } = useAuth();
   // Public visitors browsing the site see the guest nav items too, so they
   // know those sections exist — but only "Browse Rooms" is actually public.
   const navItems = roleNavItems[role] || (!isAuthenticated ? roleNavItems.guest : []);
-
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
 
   const handleRestrictedClick = () => {
     toast.error("Please sign in to access that page.");
@@ -105,18 +99,6 @@ const Sidebar = ({ isOpen, onClose }) => {
             );
           })}
         </nav>
-
-        {/* Logout — only shown to authenticated users; no sign-in CTA here */}
-        {isAuthenticated && (
-          <div className="px-3 py-4 border-t border-[#C9A24B]/20">
-            <button
-              onClick={handleLogout}
-              className="w-full px-3 py-2.5 rounded text-sm font-bold text-white hover:text-[#C9A24B] transition-colors text-left"
-            >
-              Logout
-            </button>
-          </div>
-        )}
       </aside>
     </>
   );

@@ -1,28 +1,25 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getRooms } from "../api/rooms.api";
 import { getApprovedReviews } from "../api/reviews.api";
 import { sendContactMessage } from "../api/contact.api";
 import { usePageTitle } from "../hooks/usePageTitle";
-import { useAuth } from "../hooks/useAuth";
 import toast from "react-hot-toast";
+import Navbar from "../components/layout/Navbar";
 import {
-  Menu, X, Wifi, UtensilsCrossed, Car, ShieldCheck,
+  Wifi, UtensilsCrossed, Car, ShieldCheck,
   MapPin, Phone, Mail, Clock, Star, Users, Building2, Award,
 } from "lucide-react";
 import {
   display, body, sectionLabel,
   card, cardHover, input,
-  btnPrimary, btnNavy, btnOutline, btnGhost,
+  btnPrimary, btnNavy, btnOutline,
   skeleton,
 } from "../constants/theme";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dmtfy0fnm/";
 
 const roomTypeLabels = { single: "Single", double: "Double", suite: "Suite" };
-
-// Roles that land on /profile — admin goes to their dashboard instead
-const PROFILE_ROLES = ["guest", "receptionist", "housekeeper"];
 
 const today = new Date().toISOString().split("T")[0];
 
@@ -92,12 +89,11 @@ const testimonials = [
 const Landing = () => {
   usePageTitle();
   const navigate = useNavigate();
-  const { user, role, isAuthenticated } = useAuth();
+  const location = useLocation();
   const [rooms, setRooms] = useState([]);
   const [reviews, setReviews] = useState(null);
   const [displayedReviews, setDisplayedReviews] = useState(null);
   const [showAllReviews, setShowAllReviews] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeReview, setActiveReview] = useState(0);
   const [activeSuiteImage, setActiveSuiteImage] = useState(0);
@@ -108,18 +104,22 @@ const Landing = () => {
   const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [contactSubmitting, setContactSubmitting] = useState(false);
 
-  const initial =
-    user?.first_name?.[0]?.toUpperCase() || user?.username?.[0]?.toUpperCase();
-  const displayName = user?.first_name || user?.username;
-  const handleProfileClick = () =>
-    navigate(PROFILE_ROLES.includes(role) ? "/profile" : "/admin/dashboard");
-
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSuiteImage((prev) => (prev + 1) % signatureSuiteImages.length);
     }, 3000);
     return () => clearInterval(timer);
   }, []);
+
+  // Support arriving from another page's nav link, e.g. /#rooms
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      });
+    }
+  }, [location.hash]);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -156,7 +156,6 @@ const Landing = () => {
 
   const handleViewMore = () => { setShowAllReviews(true); setDisplayedReviews(reviews); };
   const handleViewLess = () => { setShowAllReviews(false); setDisplayedReviews(reviews.slice(0, 3)); setActiveReview(0); };
-  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   const handleAvailabilitySearch = (e) => {
     e.preventDefault();
@@ -183,69 +182,7 @@ const Landing = () => {
 
   return (
     <div className={`min-h-screen bg-white ${body}`}>
-
-      {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0B1F3A]/95 backdrop-blur-sm border-b border-[#C9A24B]/20">
-        <div className="h-16 flex items-center justify-between px-4 lg:px-6">
-          <div className="flex items-baseline gap-2">
-            <span className={`${display} text-white font-bold text-lg tracking-wide`}>Fahari Grand</span>
-            <span className="text-[#C9A24B] text-xs italic hidden sm:inline">Hotel &amp; Suites</span>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2">
-            <button onClick={() => scrollTo("why-us")}       className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>About</button>
-            <button onClick={() => scrollTo("rooms")}        className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Rooms</button>
-            <button onClick={() => scrollTo("testimonials")} className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Reviews</button>
-            <button onClick={() => scrollTo("contact")}      className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Contact</button>
-
-            {isAuthenticated ? (
-              <button onClick={handleProfileClick} className="flex items-center gap-2.5 group pl-2" title="My Profile">
-                <span className="hidden md:block text-white text-sm font-semibold group-hover:text-[#C9A24B] transition">
-                  {displayName}
-                </span>
-                <div className="w-8 h-8 rounded-full bg-[#C9A24B] flex items-center justify-center text-[#0B1F3A] font-bold text-sm group-hover:ring-2 group-hover:ring-[#C9A24B] group-hover:ring-offset-2 group-hover:ring-offset-[#0B1F3A] transition-all">
-                  {initial}
-                </div>
-              </button>
-            ) : (
-              <>
-                <button onClick={() => navigate("/login")}     className={`${btnGhost} text-sm px-3 py-1.5 !text-white/80`}>Sign In</button>
-                <button onClick={() => navigate("/register")}  className={`${btnPrimary} text-sm px-5 py-2 rounded`}>Book Now</button>
-              </>
-            )}
-          </div>
-
-          <button onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? "Close menu" : "Open menu"} className="sm:hidden text-white hover:text-[#C9A24B] transition">
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-
-        {menuOpen && (
-          <div className="sm:hidden bg-[#0B1F3A] border-t border-[#C9A24B]/20 px-4 lg:px-6 py-4 space-y-1">
-            <button onClick={() => { scrollTo("why-us");       setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">About</button>
-            <button onClick={() => { scrollTo("rooms");        setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Rooms</button>
-            <button onClick={() => { scrollTo("testimonials"); setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Reviews</button>
-            <button onClick={() => { scrollTo("contact");      setMenuOpen(false); }} className="block text-white text-sm font-semibold w-full text-left py-2.5">Contact</button>
-
-            {isAuthenticated ? (
-              <button
-                onClick={() => { handleProfileClick(); setMenuOpen(false); }}
-                className="flex items-center gap-3 w-full text-left py-2.5"
-              >
-                <div className="w-8 h-8 rounded-full bg-[#C9A24B] flex items-center justify-center text-[#0B1F3A] font-bold text-sm shrink-0">
-                  {initial}
-                </div>
-                <span className="text-white text-sm font-semibold">{displayName}</span>
-              </button>
-            ) : (
-              <>
-                <button onClick={() => navigate("/login")}    className="block text-white text-sm font-semibold w-full text-left py-2.5">Sign In</button>
-                <button onClick={() => navigate("/register")} className={`block w-full ${btnPrimary} py-3 rounded text-sm mt-2`}>Book Now</button>
-              </>
-            )}
-          </div>
-        )}
-      </nav>
+      <Navbar />
 
       <div className="pt-16">
 

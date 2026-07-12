@@ -6,7 +6,6 @@ import {
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
-import ProfileButton from "../../components/shared/ProfileButton";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   pageTitle, pageSubtitle, card, cardHover, select,
@@ -209,17 +208,11 @@ const TaskList = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header row with profile button */}
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-        <div>
-          <h2 className={pageTitle}>My Tasks</h2>
-          <p className={pageSubtitle}>
-            Manage your cleaning assignments and maintenance requests.
-          </p>
-        </div>
-        <div className="shrink-0">
-          <ProfileButton />
-        </div>
+      <div>
+        <h2 className={pageTitle}>My Tasks</h2>
+        <p className={pageSubtitle}>
+          Manage your cleaning assignments and maintenance requests.
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">

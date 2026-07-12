@@ -1,11 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { getDailyRoster, checkInOut, confirmBooking } from "../../api/receptionist.api";
 import toast from "react-hot-toast";
-import ProfileButton from "../../components/shared/ProfileButton";
 import { usePageTitle } from "../../hooks/usePageTitle";
 import {
   pageTitle, pageSubtitle, sectionLabel, card, badge,
-  btnPrimary, btnNavy, btnOutline, btnGhost, input, emptyState, skeleton, display,
+  btnPrimary, btnNavy, btnOutline, input, emptyState, skeleton, display,
 } from "../../constants/theme";
 
 const BookingRow = ({ booking, onAction }) => {
@@ -171,13 +170,7 @@ const Roster = () => {
             onChange={(e) => setDate(e.target.value)}
             className={input}
           />
-          <button
-            onClick={fetchRoster}
-            className={`px-4 py-2 rounded text-sm ${btnGhost}`}
-          >
-            Refresh
-          </button>
-          <ProfileButton />
+          
         </div>
       </div>
 

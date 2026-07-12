@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
 import { usePageTitle } from "../../hooks/usePageTitle";
+import Navbar from "../../components/layout/Navbar";
 import {
   display, body, pageTitle, pageSubtitle, card,
   input, btnPrimary, btnNavy, skeleton, badge,
@@ -39,15 +39,8 @@ const EyeOffIcon = () => (
   </svg>
 );
 
-const roleHome = {
-  guest:        "/guest/rooms",
-  receptionist: "/receptionist/roster",
-  housekeeper:  "/housekeeper/tasks",
-};
-
 const ProfilePage = () => {
   usePageTitle("My Profile");
-  const navigate = useNavigate();
   const { role } = useAuth();
 
   // Local copy of user so edits reflect immediately without touching AuthContext
@@ -142,10 +135,13 @@ const ProfilePage = () => {
   if (loading) {
     return (
       <div className={`min-h-screen bg-[#FAF8F3] ${body}`}>
-        <div className="max-w-2xl mx-auto px-4 py-10 space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className={`h-32 ${skeleton}`} />
-          ))}
+        <Navbar />
+        <div className="pt-16">
+          <div className="max-w-2xl mx-auto px-4 py-10 space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className={`h-32 ${skeleton}`} />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -162,21 +158,9 @@ const ProfilePage = () => {
 
   return (
     <div className={`min-h-screen bg-[#FAF8F3] ${body}`}>
-      {/* Mini-navbar so the page doesn't feel naked */}
-      <header className="h-16 bg-[#0B1F3A] border-b border-[#C9A24B]/20 flex items-center px-4 lg:px-8 sticky top-0 z-10">
-        <button
-          onClick={() => navigate(roleHome[role] || "/")}
-          className="flex items-center gap-2 text-white hover:text-[#C9A24B] transition text-sm font-bold"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6"/>
-          </svg>
-          Back to Dashboard
-        </button>
-        <span className={`${display} text-[#C9A24B] font-bold ml-auto`}>Fahari Grand</span>
-      </header>
+      <Navbar />
 
+      <div className="pt-16">
       <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
 
         {/* Page heading */}
@@ -352,6 +336,7 @@ const ProfilePage = () => {
           </div>
         </div>
 
+      </div>
       </div>
     </div>
   );

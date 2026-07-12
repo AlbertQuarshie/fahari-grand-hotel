@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/shared/ProtectedRoute";
 import DashboardLayout from "./components/layout/DashboardLayout";
+import Navbar from "./components/layout/Navbar";
 import { body } from "./constants/theme";
 import Landing from "./pages/Landing";
 import Login from "./pages/auth/Login";
@@ -69,8 +70,11 @@ function App() {
           <Route
             path="/unauthorized"
             element={
-              <div className={`min-h-screen flex items-center justify-center bg-[#FAF8F3] text-[#0B1F3A] font-bold ${body}`}>
-                You are not authorized to view this page.
+              <div className={`min-h-screen bg-[#FAF8F3] ${body}`}>
+                <Navbar />
+                <div className="pt-16 min-h-screen flex items-center justify-center text-[#0B1F3A] font-bold">
+                  You are not authorized to view this page.
+                </div>
               </div>
             }
           />

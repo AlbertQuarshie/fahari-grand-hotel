@@ -8,11 +8,12 @@ const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className={`h-screen flex flex-col bg-[#FAF8F3] overflow-hidden ${body}`}>
-      {/* Navbar spans the full width at the top; Sidebar starts below it, not beside it */}
+    <div className={`h-screen bg-[#FAF8F3] overflow-hidden ${body}`}>
+      {/* Navbar is fixed and spans the full width at the top of every page */}
       <Navbar onMenuClick={() => setSidebarOpen(true)} />
 
-      <div className="flex-1 flex min-w-0 overflow-hidden">
+      {/* Sidebar + content sit below the fixed navbar's 64px height */}
+      <div className="h-[calc(100vh-4rem)] mt-16 flex min-w-0 overflow-hidden">
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
