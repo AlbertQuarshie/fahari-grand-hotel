@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("user", JSON.stringify(userData));
 
     setUser(userData);
-    toast.success(`Welcome back, ${userData.first_name || userData.username}!`);
+    toast.success(`Welcome, ${userData.first_name || userData.username}!`);
     return userData;
   };
 
