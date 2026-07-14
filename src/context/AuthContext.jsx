@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect, useContext, useRef } from "react";
 import { loginUser, registerGuest, getMe } from "../api/auth.api";
 import toast from "react-hot-toast";
 
@@ -7,6 +7,10 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  // One-shot flag: true for the brief window right after an intentional
+  // logout, so ProtectedRoute can tell "user just logged out" apart from
+  // "user was never authorized here" and skip its own toast/redirect.
+  const justLoggedOutRef = useRef(false);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -52,6 +56,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    justLoggedOutRef.current = true;
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     localStorage.removeItem("user");
@@ -67,11 +72,13 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    justLoggedOutRef,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

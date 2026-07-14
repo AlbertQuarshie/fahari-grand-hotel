@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import {
   getAllRooms, createRoom, updateRoom, deleteRoom,
+  uploadRoomImage, deleteRoomImage,
 } from "../../api/admin.api";
-import { X } from "lucide-react";
+import { X, Plus, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import Pagination from "../../components/shared/Pagination";
 import { usePagination } from "../../hooks/usePagination";
@@ -46,6 +47,39 @@ const RoomModal = ({ room, onClose, onSave }) => {
     room?.image ? `${CLOUDINARY_BASE}${room.image}` : null
   );
   const [submitting, setSubmitting] = useState(false);
+  const [gallery, setGallery] = useState(room?.images || []);
+  const [galleryUploading, setGalleryUploading] = useState(false);
+
+  const handleAddGalleryFiles = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (!files.length) return;
+    if (!room) {
+      toast.error("Save the room first, then reopen it to add more photos.");
+      return;
+    }
+    setGalleryUploading(true);
+    try {
+      for (const file of files) {
+        const img = await uploadRoomImage(room.id, file);
+        setGallery((prev) => [...prev, img]);
+      }
+      toast.success(`${files.length} photo${files.length > 1 ? "s" : ""} added.`);
+    } catch {
+      toast.error("Failed to upload one or more photos.");
+    } finally {
+      setGalleryUploading(false);
+    }
+  };
+
+  const handleDeleteGalleryImage = async (imgId) => {
+    try {
+      await deleteRoomImage(imgId);
+      setGallery((prev) => prev.filter((img) => img.id !== imgId));
+    } catch {
+      toast.error("Failed to remove photo.");
+    }
+  };
 
   const handleChange = (e) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -197,6 +231,57 @@ const RoomModal = ({ room, onClose, onSave }) => {
             />
           </div>
 
+          <div className="col-span-2 border-t border-[#0B1F3A]/10 pt-4">
+            <label className="block text-[#0B1F3A] text-sm font-semibold mb-2">
+              Additional Photos <span className="font-normal text-[#0B1F3A]/50">(bedroom, bathroom, living area, etc.)</span>
+            </label>
+
+            {!room && (
+              <p className="text-xs font-semibold text-[#0B1F3A]/50 bg-[#FAF8F3] border border-[#0B1F3A]/10 rounded px-3 py-2 mb-3">
+                Save this room first, then reopen it to add more photos.
+              </p>
+            )}
+
+            <div className="grid grid-cols-4 gap-3">
+              {gallery.map((img) => (
+                <div key={img.id} className="relative h-20 rounded overflow-hidden border border-[#0B1F3A]/10 group">
+                  <img
+                    src={`${CLOUDINARY_BASE}${img.image}`}
+                    alt={img.caption || "Room photo"}
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteGalleryImage(img.id)}
+                    className="absolute top-1 right-1 bg-white/90 rounded p-1 text-red-700 opacity-0 group-hover:opacity-100 transition"
+                    title="Remove photo"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              ))}
+
+              {room && (
+                <div
+                  onClick={() => !galleryUploading && document.getElementById("room-gallery-input").click()}
+                  className="h-20 rounded border-2 border-dashed border-[#0B1F3A]/20 hover:border-[#C9A24B] transition cursor-pointer flex flex-col items-center justify-center gap-1 text-[#0B1F3A]/50 bg-[#FAF8F3]"
+                >
+                  <Plus size={16} />
+                  <span className="text-[10px] font-semibold">{galleryUploading ? "Uploading..." : "Add"}</span>
+                </div>
+              )}
+            </div>
+
+            <input
+              id="room-gallery-input"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleAddGalleryFiles}
+              className="hidden"
+            />
+          </div>
+
           <div className="flex gap-3 pt-2">
             <button onClick={onClose} className={`flex-1 py-2.5 rounded text-sm ${btnOutline}`}>
               Cancel
@@ -293,7 +378,7 @@ const RoomManagement = () => {
     const newRoom = await createRoom(fd);
     setRooms((prev) => [...prev, newRoom]);
     setShowModal(false);
-    toast.success(`Room ${newRoom.room_number} created.`);
+    toast.success(`Room ${newRoom.room_number} created. Reopen it to add more photos.`);
   };
 
   const handleUpdate = async (fd) => {

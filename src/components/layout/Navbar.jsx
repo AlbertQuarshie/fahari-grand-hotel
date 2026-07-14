@@ -14,7 +14,14 @@ const navLinks = [
   { label: "Contact", id: "contact" },
 ];
 
-
+/**
+ * Site-wide navbar — same look and nav links on every page except Login/Register.
+ * On the homepage, nav links smooth-scroll to their section. On any other page,
+ * they navigate to the homepage with a #hash, which Landing.jsx picks up on
+ * mount to scroll to that section.
+ * Pass `onMenuClick` on pages that also render a Sidebar (dashboard pages) to
+ * show a small toggle for it on mobile; omit it on Landing.
+ */
 const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,10 +41,17 @@ const Navbar = ({ onMenuClick }) => {
   };
 
   const handleLogout = () => {
+    // Navigate home first, then clear auth state. React 18 batches both
+    // updates into a single re-render, so the protected page unmounts and
+    // Landing mounts together — it never gets a chance to render its own
+    // "unauthenticated" branch (redirect-to-login) in between. That's what
+    // used to cause a flash before this went home. No full reload needed,
+    // which is what was causing the blank white screen: a browser reload
+    // always shows a blank page while it reboots the whole app from
+    // scratch. justLoggedOutRef (see ProtectedRoute) is a second safety
+    // net in case these two updates ever end up in separate renders.
+    navigate("/", { replace: true });
     logout();
-    navigate("/");
-    setMenuOpen(false);
-    setAccountMenuOpen(false);
   };
 
   const goToSection = (id) => {

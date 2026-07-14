@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { getRoom } from "../../api/rooms.api";
 import { createBooking } from "../../api/bookings.api";
 import toast from "react-hot-toast";
@@ -11,6 +12,139 @@ import {
 const CLOUDINARY_BASE = "https://res.cloudinary.com/dmtfy0fnm/";
 
 const roomTypeLabels = { single: "Single", double: "Double", suite: "Suite" };
+
+// Combine the primary room image with the gallery (bedroom, bathroom, living area, etc.)
+// into a single ordered list of { src, caption } used for the scroller.
+const buildGallery = (room) => {
+  const items = [];
+  if (room.image) {
+    items.push({ src: `${CLOUDINARY_BASE}${room.image}`, caption: "Overview" });
+  }
+  (room.images || []).forEach((img) => {
+    items.push({ src: `${CLOUDINARY_BASE}${img.image}`, caption: img.caption || "Room photo" });
+  });
+  return items;
+};
+
+const RoomGallery = ({ room }) => {
+  const gallery = buildGallery(room);
+  const [active, setActive] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
+
+  const hasMultiple = gallery.length > 1;
+
+  const goTo = (i) => setActive((i + gallery.length) % gallery.length);
+
+  if (gallery.length === 0) {
+    return (
+      <div className="relative h-64 sm:h-80 rounded overflow-hidden bg-[#0B1F3A]/5 border border-[#0B1F3A]/10">
+        <div className="w-full h-full flex items-center justify-center">
+          <span className={`${display} text-[#0B1F3A]/40 font-bold text-2xl`}>
+            Room {room.room_number}
+          </span>
+        </div>
+        <span className={`absolute top-4 right-4 ${badge(room.status)}`}>{room.status}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="relative h-64 sm:h-80 rounded overflow-hidden bg-[#0B1F3A]/5 border border-[#0B1F3A]/10">
+        <img
+          src={gallery[active].src}
+          alt={`Room ${room.room_number} — ${gallery[active].caption}`}
+          onClick={() => setLightbox(true)}
+          className="w-full h-full object-cover cursor-zoom-in"
+        />
+        <span className={`absolute top-4 right-4 ${badge(room.status)}`}>{room.status}</span>
+
+        {gallery[active].caption && (
+          <span className="absolute bottom-3 left-3 bg-[#0B1F3A]/70 text-white text-xs font-semibold px-2.5 py-1 rounded">
+            {gallery[active].caption}
+          </span>
+        )}
+
+        {hasMultiple && (
+          <>
+            <button
+              onClick={() => goTo(active - 1)}
+              aria-label="Previous photo"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full p-1.5 shadow transition"
+            >
+              <ChevronLeft size={18} className="text-[#0B1F3A]" />
+            </button>
+            <button
+              onClick={() => goTo(active + 1)}
+              aria-label="Next photo"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/85 hover:bg-white rounded-full p-1.5 shadow transition"
+            >
+              <ChevronRight size={18} className="text-[#0B1F3A]" />
+            </button>
+            <span className="absolute bottom-3 right-3 bg-[#0B1F3A]/70 text-white text-xs font-semibold px-2 py-1 rounded">
+              {active + 1} / {gallery.length}
+            </span>
+          </>
+        )}
+      </div>
+
+      {hasMultiple && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {gallery.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`shrink-0 h-16 w-20 rounded overflow-hidden border-2 transition ${
+                i === active ? "border-[#C9A24B]" : "border-transparent opacity-70 hover:opacity-100"
+              }`}
+            >
+              <img src={img.src} alt={img.caption} className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setLightbox(false)}
+        >
+          <button
+            onClick={() => setLightbox(false)}
+            aria-label="Close"
+            className="absolute top-4 right-4 text-white/80 hover:text-white"
+          >
+            <X size={28} />
+          </button>
+          <img
+            src={gallery[active].src}
+            alt={gallery[active].caption}
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[85vh] max-w-full object-contain rounded"
+          />
+          {hasMultiple && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); goTo(active - 1); }}
+                aria-label="Previous photo"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/15 hover:bg-white/25 rounded-full p-2 transition"
+              >
+                <ChevronLeft size={24} className="text-white" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); goTo(active + 1); }}
+                aria-label="Next photo"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/15 hover:bg-white/25 rounded-full p-2 transition"
+              >
+                <ChevronRight size={24} className="text-white" />
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const today = new Date().toISOString().split("T")[0];
 
@@ -104,24 +238,7 @@ const RoomDetail = () => {
         ← Back to Rooms
       </button>
 
-      <div className="relative h-64 rounded overflow-hidden bg-[#0B1F3A]/5 border border-[#0B1F3A]/10">
-        {room.image ? (
-          <img
-            src={`${CLOUDINARY_BASE}${room.image}`}
-            alt={`Room ${room.room_number}`}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className={`${display} text-[#0B1F3A]/40 font-bold text-2xl`}>
-              Room {room.room_number}
-            </span>
-          </div>
-        )}
-        <span className={`absolute top-4 right-4 ${badge(room.status)}`}>
-          {room.status}
-        </span>
-      </div>
+      <RoomGallery room={room} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className={`${card} p-6 space-y-4`}>

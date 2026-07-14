@@ -5,13 +5,26 @@ import { useAuth } from "../../hooks/useAuth";
 import { body } from "../../constants/theme";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading, justLoggedOutRef } = useAuth();
   const location = useLocation();
+  // Read once per render so the render branch below and the effect agree —
+  // if we let each read (and reset) the ref independently, whichever runs
+  // second sees it already cleared and can act as if this were a normal
+  // unauthorized visit (wrong toast, wrong redirect target).
+  const justLoggedOut = justLoggedOutRef.current;
 
   useEffect(() => {
     if (loading) return;
 
     if (!isAuthenticated) {
+      // Skip the noise if this is the direct result of a logout — Navbar
+      // already sends the user home, this isn't an unauthorized access
+      // attempt that needs a warning. Consume the flag so it only
+      // suppresses this one occurrence.
+      if (justLoggedOut) {
+        justLoggedOutRef.current = false;
+        return;
+      }
       toast.error("Please sign in to access that page.");
     } else if (allowedRoles && !allowedRoles.includes(user.role)) {
       toast.error("You don't have permission to access that page.");
@@ -29,11 +42,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
-  // This only fires for direct URL access / page refresh while logged out —
-  // normal in-app navigation (e.g. Sidebar) never reaches a protected route
-  // without being authenticated, since those links are disabled instead.
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={justLoggedOut ? "/" : "/login"} replace />;
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {

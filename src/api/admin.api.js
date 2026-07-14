@@ -57,6 +57,21 @@ export const deleteRoom = async (id) => {
   await api.delete(`/auth/rooms/${id}/`);
 };
 
+export const uploadRoomImage = async (roomId, file, caption = "") => {
+  const fd = new FormData();
+  fd.append("room", roomId);
+  fd.append("image", file);
+  if (caption) fd.append("caption", caption);
+  const { data } = await api.post("/auth/room-images/", fd, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+};
+
+export const deleteRoomImage = async (imageId) => {
+  await api.delete(`/auth/room-images/${imageId}/`);
+};
+
 export const getAllMaintenance = async () => {
   const { data } = await api.get("/auth/maintenance/");
   return data;
