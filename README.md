@@ -133,39 +133,7 @@ App will be available at `http://localhost:5173`.
 
 ---
 
-## G. Project Structure
-
-```
-fahari-frontend/
-├── public/
-├── src/
-│   ├── assets/                   # Images, icons, brand assets
-│   ├── components/               # Reusable UI components
-│   ├── context/
-│   │   ├── AuthContext.jsx       # Auth context provider
-│   │   └── useAuth.js            # useAuth hook (separate file for Vite HMR compatibility)
-│   ├── pages/
-│   │   ├── LandingPage.jsx
-│   │   ├── LoginPage.jsx
-│   │   ├── RegisterPage.jsx
-│   │   ├── GuestDashboard.jsx
-│   │   ├── ReceptionistDashboard.jsx
-│   │   ├── AdminDashboard.jsx
-│   │   └── HousekeeperDashboard.jsx
-│   ├── services/
-│   │   └── api.js                # Axios instance & API helpers
-│   ├── App.jsx
-│   └── main.jsx
-├── .env
-├── .env.example
-├── index.html
-├── vite.config.js
-└── package.json
-```
-
----
-
-## H. Tech Stack
+## G. Tech Stack
 
 | Layer          | Technology              |
 | -------------- | ----------------------- |
@@ -177,7 +145,7 @@ fahari-frontend/
 
 ---
 
-## I. Screenshots
+## H. Screenshots
 1. Homepage
 ![Homepage](public/Homepage.png)
 

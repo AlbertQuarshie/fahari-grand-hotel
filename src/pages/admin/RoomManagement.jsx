@@ -115,7 +115,7 @@ const RoomModal = ({ room, onClose, onSave }) => {
   return (
     <div className="fixed inset-0 z-50 bg-[#0B1F3A]/60 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-white rounded border border-[#0B1F3A]/10 w-full max-w-3xl max-h-[95vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10 sticky top-0 bg-white">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#0B1F3A]/10 sticky top-0 z-10 bg-white">
           <h3 className={`${display} text-[#0B1F3A] font-bold text-lg`}>
             {room ? "Edit Room" : "Add New Room"}
           </h3>

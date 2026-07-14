@@ -37,7 +37,7 @@ const RoomGallery = ({ room }) => {
 
   if (gallery.length === 0) {
     return (
-      <div className="relative h-64 sm:h-80 rounded overflow-hidden bg-[#0B1F3A]/5 border border-[#0B1F3A]/10">
+      <div className="relative h-80 sm:h-[26rem] md:h-[30rem] rounded overflow-hidden bg-[#0B1F3A]/5 border border-[#0B1F3A]/10">
         <div className="w-full h-full flex items-center justify-center">
           <span className={`${display} text-[#0B1F3A]/40 font-bold text-2xl`}>
             Room {room.room_number}
@@ -50,7 +50,7 @@ const RoomGallery = ({ room }) => {
 
   return (
     <div className="space-y-2">
-      <div className="relative h-64 sm:h-80 rounded overflow-hidden bg-[#0B1F3A]/5 border border-[#0B1F3A]/10">
+      <div className="relative h-80 sm:h-[26rem] md:h-[30rem] rounded overflow-hidden bg-[#0B1F3A]/5 border border-[#0B1F3A]/10">
         <img
           src={gallery[active].src}
           alt={`Room ${room.room_number} — ${gallery[active].caption}`}
